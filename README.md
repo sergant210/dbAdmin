@@ -21,7 +21,7 @@ dbAdmin allows you to manage your MySql tables.
 [![](https://file.modx.pro/files/5/e/8/5e86a866604d5af39e5d9aa9aa3438e7s.jpg)](https://file.modx.pro/files/5/e/8/5e86a866604d5af39e5d9aa9aa3438e7.png)
 
 ####Video
-https://youtu.be/x3KEA6N4uts
+https://youtu.be/w9VxVQ2HrCA
 ## Improvements
 Feel free to suggest ideas/improvements/bugs on GitHub:
 http://github.com/sergant210/dbAdmin/issues
