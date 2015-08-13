@@ -8,7 +8,7 @@ dbAdmin - это модуль для MODX Revolution для управления
 - экспорт таблиц в текстовый файл;
 - выполнение sql запросов.
 
---------------------- [ru] ----------------------------  
+--------------------- [en] ----------------------------  
 dbAdmin allows you to manage your MySql tables.  
 **Base features:**
 - browse table;
