@@ -39,7 +39,7 @@ $_lang['dbadmin_execute'] = 'Выполнить';
 $_lang['dbadmin_close'] = 'Закрыть';
 $_lang['dbadmin_clear'] = 'Очистить';
 
-$_lang['createdon'] = 'Время воздания: ';
+$_lang['createdon'] = 'Время создания: ';
 $_lang['table_structure'] = 'Структура таблицы';
 $_lang['table_dump'] = 'Дамп данных таблицы';
 
