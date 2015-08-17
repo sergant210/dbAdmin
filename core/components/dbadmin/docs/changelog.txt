@@ -1,5 +1,11 @@
 Changelog for dbAdmin.
 
+1.0.0-pl
+==============
+- Fixed the error of renaming table.
+- Auto synchronization instead of the button.
+- Added a "need update" marker (by experiment).
+
 1.0.0-beta
 ==============
 - Initial release

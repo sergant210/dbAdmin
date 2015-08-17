@@ -43,18 +43,11 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         }
         /** @var dbAdmin $dbAdmin */
         $dbAdmin = $this->modx->getService('dbadmin', 'dbAdmin', $this->modx->getOption('dbadmin_core_path', null, $this->modx->getOption('core_path') . 'components/dbadmin/') . 'model/dbadmin/');
-        if ($dbAdmin->checkNeedUpdate()) $this->setProperty('mustUpdate',true);
+        if ($dbAdmin->checkNeedUpdate()) $dbAdmin->synchonize();
         $this->tables = $dbAdmin->getTablesStatus();
         return $c;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function outputArray(array $array,$count = false) {
-        if ($count === false) { $count = count($array); }
-        return '{"success":true,"total":"'.$count.'","mustUpdate":'.(int) $this->getProperty('mustUpdate').',"results":'.$this->modx->toJSON($array).'}';
-    }
     /**
      * @param xPDOObject $object
      *

@@ -89,9 +89,6 @@ dbAdmin.grid.Tables = function (config) {
 	}
 	// Clear selection on grid refresh
 	this.store.on('load', function (o) {
-		if(o.reader.jsonData.mustUpdate) {
-			Ext.getCmp('dbadmin-db-sync-btn').setText('<i class="icon icon-exclamation-triangle red"></i> ' + _('dbadmin_db_sync'));
-		}
 		if (this._getSelectedIds().length) {
 			this.getSelectionModel().clearSelections();
 		}
@@ -267,31 +264,6 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		});
 		return true;
 	},
-	syncTablesList: function () {
-		var panel = Ext.getCmp('dbadmin-panel');
-		panel.el.mask(_('working'));
-		MODx.Ajax.request({
-			url: dbAdmin.config.connector_url,
-			params: {
-				action: 'mgr/tables/sync'
-			},
-			listeners: {
-				success: {
-					fn: function (r) {
-						panel.el.unmask();
-						Ext.getCmp('dbadmin-db-sync-btn').setText(_('dbadmin_db_sync'));
-						this.refresh();
-					}, scope: this
-				},
-				failure: {
-					fn: function (r) {
-						panel.el.unmask();
-						MODx.msg.alert(_('error'), r.message);
-					}, scope: this
-				}
-			}
-		});
-	},
 	getTopBar: function (config) {
 		return [{
 			text: _('dbadmin_db_export'),
@@ -317,11 +289,6 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 				handler: this.removeSelected,
 				scope: this
 			}]
-		}, {
-			text: _('dbadmin_db_sync'),
-			id: 'dbadmin-db-sync-btn',
-			handler: this.syncTablesList,
-			scope: this
 		}, '->', {
 			xtype: 'textfield',
 			name: 'query',

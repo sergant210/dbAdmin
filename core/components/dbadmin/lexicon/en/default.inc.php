@@ -32,7 +32,7 @@ $_lang['dbadmin_tables_truncate_confirm'] = 'Are you sure you want to truncate t
 $_lang['dbadmin_selected_truncate'] = 'Truncate selected';
 $_lang['dbadmin_table_data'] = 'View the table';
 $_lang['dbadmin_rows_number'] = 'Total: ';
-$_lang['dbadmin_db_sync'] = 'Synchronize';
+$_lang['dbadmin_package_update'] = ' <i class="icon icon-exclamation-triangle package-update" title="dbAdmin update is available"></i>';
 
 $_lang['dbadmin_execute_sql'] = 'Exexute SQL query';
 $_lang['dbadmin_execute'] = 'Execute';
@@ -46,6 +46,7 @@ $_lang['table_dump'] = 'Data dump';
 $_lang['dbadmin_table_err_ae'] = 'The table with the same name already exists!';
 $_lang['dbadmin_table_err_nf'] = 'The table is not found!';
 $_lang['dbadmin_table_err_ns'] = 'A table is not selected!';
+$_lang['dbadmin_table_err_nfs'] = 'The table with id = "[[+id]]" is not found!';
 $_lang['dbadmin_table_err_path'] = 'The path is not found!';
 $_lang['dbadmin_table_err_remove'] = 'Error removing table!';
 $_lang['dbadmin_table_err_save'] = 'Error saving table!';

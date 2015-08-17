@@ -55,7 +55,11 @@ a.x-menu-item .x-menu-item-text .icon {
 .x-menu-list-item:hover .icon {
 	color: inherit !important;
 }
-
+.package-update {
+	color: #ff7c0a;
+	padding: 5px;
+	cursor:	default;
+}
 /*
 ul.dbadmin-row-actions .actions-menu {width: 40px;}
 ul.dbadmin-row-actions .actions-menu:after {content: " \f107";}

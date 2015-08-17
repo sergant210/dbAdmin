@@ -32,7 +32,7 @@ $_lang['dbadmin_tables_truncate_confirm'] = 'Вы уверены, что хот�
 $_lang['dbadmin_selected_truncate'] = 'Очистить выбранное';
 $_lang['dbadmin_table_data'] = 'Посмотреть таблицу';
 $_lang['dbadmin_rows_number'] = 'Количество записей: ';
-$_lang['dbadmin_db_sync'] = 'Синхронизировать';
+$_lang['dbadmin_package_update'] = ' <i class="icon icon-exclamation-triangle package-update" title="Доступна новая версия dbAdmin"></i>';
 
 $_lang['dbadmin_execute_sql'] = 'Выполнить SQL запрос';
 $_lang['dbadmin_execute'] = 'Выполнить';
@@ -46,6 +46,7 @@ $_lang['table_dump'] = 'Дамп данных таблицы';
 $_lang['dbadmin_table_err_ae'] = 'Таблица с таким именем уже существует!';
 $_lang['dbadmin_table_err_nf'] = 'Таблица не найдена!';
 $_lang['dbadmin_table_err_ns'] = 'Таблица не указана!';
+$_lang['dbadmin_table_err_nfs'] = 'Не найдена таблица с id = "[[+id]]"!';
 $_lang['dbadmin_table_err_path'] = 'Путь не найден!';
 $_lang['dbadmin_table_err_remove'] = 'Ошибка при удалении таблицы!';
 $_lang['dbadmin_table_err_save'] = 'Ошибка при сохранении таблицы!';

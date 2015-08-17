@@ -4,12 +4,6 @@ dbAdmin.panel.Home = function (config) {
 		baseCls: 'modx-formpanel',
 		layout: 'anchor',
 		id: 'dbadmin-panel',
-		/*
-		 stateful: true,
-		 stateId: 'dbadmin-panel-home',
-		 stateEvents: ['tabchange'],
-		 getState:function() {return {activeTab:this.items.indexOf(this.getActiveTab())};},
-		 */
 		hideMode: 'offsets',
 		items: [{
 			html: '<h2>' + _('dbadmin_menu_desc') + '</h2>',
@@ -25,6 +19,7 @@ dbAdmin.panel.Home = function (config) {
 				layout: 'form',
 				items: [{
 					html: _('dbadmin_intro_msg'),
+					id: 'dbadmin-intro-msg',
 					cls: 'panel-desc',
 					style: {margin: '15px 15px 0'}
 				}, {
@@ -114,7 +109,6 @@ dbAdmin.panel.Home = function (config) {
 					style: {margin: '0 15px'}
 				}, {
 					xtype: Ext.ComponentMgr.types['modx-texteditor'] ? 'modx-texteditor' : 'textarea',
-					//xtype: 'textarea',
 					hideLabel: true,
 					name: 'query_result',
 					style: {margin: '10px 15px'},
@@ -133,15 +127,26 @@ dbAdmin.panel.Home = function (config) {
 			fn: function () {
 				Ext.getCmp('dbadmin-execute-query-btn').fireEvent('click');
 			}
-		}, {
-			key: Ext.EventObject.ENTER,
-			shift: true,
-			scope: this,
-			fn: function () {
-				//Ext.getCmp('dbadmin-execute-query-btn').fireEvent('click');
-				alert('Shift+Enter pressed');
+		}],
+		listeners: {
+			render: function (p) {
+				var msg = Ext.getCmp('dbadmin-intro-msg').html;
+				MODx.Ajax.request({
+					url: dbAdmin.config.connector_url,
+					params: {
+						action: 'mgr/package/checkupdate'
+					},
+					listeners: {
+						success: {
+							fn: function (r) {
+								msg +=  _('dbadmin_package_update');
+								Ext.getCmp('dbadmin-intro-msg').update(msg);
+							}, scope: this
+						}
+					}
+				});
 			}
-		}]
+		}
 	});
 	dbAdmin.panel.Home.superclass.constructor.call(this, config);
 };

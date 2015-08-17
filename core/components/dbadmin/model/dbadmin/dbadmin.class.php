@@ -110,6 +110,32 @@ class dbAdmin {
         return false;
     }
 
+    public function synchronize(){
+        $tablesList = $this->getTables();
+        $dbTablesList = $this->getDbTables();
+        $tables = array_keys($tablesList);
+        $dbTables = array_keys($dbTablesList);
+        // Удаляем лишние таблицы
+        $diff = array_diff($tables,$dbTables);
+        if (!empty($diff)) {
+            $query = $this->modx->newQuery('dbAdminTable');
+            $query->command('delete');
+            $query->where(array(
+                'name:IN' => $diff,
+            ));
+            $query->prepare();
+            if (!$query->stmt->execute()) {
+                return $this->error($this->modx->lexicon('dbadmin_sync'));
+            }
+        }
+        // Добавляем новые таблицы
+        $diff = array_diff($dbTables,$tables);
+        foreach ($diff as $table) {
+            $obj = $this->modx->newObject('dbAdminTable');
+            $obj->set('name',$table);
+            $obj->save();
+        }
+    }
     /**
      * Карта системных таблиц MODX. Используется при установке.
      * @return array
@@ -188,5 +214,21 @@ class dbAdmin {
             $this->modx->config['table_prefix'].'users' => Array('class' => 'modUser','package' => 'modx'),
             $this->modx->config['table_prefix'].'workspaces' => Array('class' => 'modWorkspace','package' => 'modx')
         );
+    }
+    /** This method returns an error
+     *
+     * @param string $message Error message
+     * @param mixed $data.
+     *
+     * @return array $response
+     */
+    public function error($message = '', $data = '') {
+        $response = array(
+            'success' => FALSE,
+            'message' => $message,
+            'data' => $data
+        );
+
+        return $response;
     }
 }
