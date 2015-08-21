@@ -100,16 +100,19 @@ class dbAdmin {
         return $tableList;
     }
     /**
-     * Проверяет, нужно ли обновить карту таблиц
+     * Проверяет, нужно ли обновить таблицу dbAdmin
      * @return bool
      */
     public function checkNeedUpdate(){
         $tables = array_keys($this->getTables());
         $dbTables = array_keys($this->getDbTables());
-        if (array_diff($dbTables,$tables) || array_diff($tables,$dbTables)) return true;
-        return false;
+        return (array_diff($dbTables,$tables) || array_diff($tables,$dbTables)) ? true : false;
     }
 
+    /**
+     * Синхронизирует таблицу dbAdmin со списком таблиц MySql
+     * @return array|bool
+     */
     public function synchronize(){
         $tablesList = $this->getTables();
         $dbTablesList = $this->getDbTables();
@@ -135,86 +138,93 @@ class dbAdmin {
             $obj->set('name',$table);
             $obj->save();
         }
+        return true;
     }
     /**
      * Карта системных таблиц MODX. Используется при установке.
      * @return array
      */
-    public function getSystemTablesFromArray(){
-        return Array
+    public function getSystemTablesFromarray(){
+        $prefix = $this->modx->config['table_prefix'];
+        $modxTables = array
         (
-            $this->modx->config['table_prefix'].'access_actiondom' => Array('class' => 'modAccessActionDom','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_actions' => Array('class' => 'modAccessAction','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_category' => Array('class' => 'modAccessCategory','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_context' => Array('class' => 'modAccessContext','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_elements' => Array('class' => 'modAccessElement','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_media_source' => Array('class' => 'modAccessMediaSource','package' => 'modx.sources'),
-            $this->modx->config['table_prefix'].'access_menus' => Array('class' => 'modAccessMenu','package' => 'modx'),
-            //$this->modx->config['table_prefix'].'access_namespace' => Array('class' => 'modAccessNamespace','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_permissions' => Array('class' => 'modAccessPermission','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_policies' => Array('class' => 'modAccessPolicy','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_policy_template_groups' => Array('class' => 'modAccessPolicyTemplateGroup','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_policy_templates' => Array('class' => 'modAccessPolicyTemplate','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_resource_groups' => Array('class' => 'modAccessResourceGroup','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_resources' => Array('class' => 'modAccessResource','package' => 'modx'),
-            $this->modx->config['table_prefix'].'access_templatevars' => Array('class' => 'modAccessTemplateVar','package' => 'modx'),
-            $this->modx->config['table_prefix'].'actiondom' => Array('class' => 'modActionDom','package' => 'modx'),
-            $this->modx->config['table_prefix'].'actions' => Array('class' => 'modAction','package' => 'modx'),
-            $this->modx->config['table_prefix'].'actions_fields' => Array('class' => 'modActionField','package' => 'modx'),
-            $this->modx->config['table_prefix'].'active_users' => Array('class' => 'modActiveUser','package' => 'modx'),
-            $this->modx->config['table_prefix'].'categories' => Array('class' => 'modCategory','package' => 'modx'),
-            $this->modx->config['table_prefix'].'categories_closure' => Array('class' => 'modCategoryClosure','package' => 'modx'),
-            $this->modx->config['table_prefix'].'class_map' => Array('class' => 'modClassMap','package' => 'modx'),
-            $this->modx->config['table_prefix'].'content_type' => Array('class' => 'modContentType','package' => 'modx'),
-            $this->modx->config['table_prefix'].'context' => Array('class' => 'modContext','package' => 'modx'),
-            $this->modx->config['table_prefix'].'context_resource' => Array('class' => 'modContextResource','package' => 'modx'),
-            $this->modx->config['table_prefix'].'context_setting' => Array('class' => 'modContextSetting','package' => 'modx'),
-            $this->modx->config['table_prefix'].'dashboard' => Array('class' => 'modDashboard','package' => 'modx'),
-            $this->modx->config['table_prefix'].'dashboard_widget' => Array('class' => 'modDashboardWidget','package' => 'modx'),
-            $this->modx->config['table_prefix'].'dashboard_widget_placement' => Array('class' => 'modDashboardWidgetPlacement','package' => 'modx'),
-            $this->modx->config['table_prefix'].'document_groups' => Array('class' => 'modResourceGroupResource','package' => 'modx'),
-            $this->modx->config['table_prefix'].'documentgroup_names' => Array('class' => 'modResourceGroup','package' => 'modx'),
-            $this->modx->config['table_prefix'].'element_property_sets' => Array('class' => 'modElementPropertySet','package' => 'modx'),
-            $this->modx->config['table_prefix'].'extension_packages' => Array('class' => 'modExtensionPackage','package' => 'modx'),
-            $this->modx->config['table_prefix'].'fc_profiles' => Array('class' => 'modFormCustomizationProfile','package' => 'modx'),
-            $this->modx->config['table_prefix'].'fc_profiles_usergroups' => Array('class' => 'modFormCustomizationProfileUserGroup','package' => 'modx'),
-            $this->modx->config['table_prefix'].'fc_sets' => Array('class' => 'modFormCustomizationSet','package' => 'modx'),
-            $this->modx->config['table_prefix'].'lexicon_entries' => Array('class' => 'modLexiconEntry','package' => 'modx'),
-            $this->modx->config['table_prefix'].'manager_log' => Array('class' => 'modManagerLog','package' => 'modx'),
-            $this->modx->config['table_prefix'].'media_sources' => Array('class' => 'modMediaSource','package' => 'modx.sources'),
-            $this->modx->config['table_prefix'].'media_sources_contexts' => Array('class' => 'modMediaSourceContext','package' => 'modx.sources'),
-            $this->modx->config['table_prefix'].'media_sources_elements' => Array('class' => 'modMediaSourceElement','package' => 'modx.sources'),
-            $this->modx->config['table_prefix'].'member_groups' => Array('class' => 'modUserGroupMember','package' => 'modx'),
-            $this->modx->config['table_prefix'].'membergroup_names' => Array('class' => 'modUserGroup','package' => 'modx'),
-            $this->modx->config['table_prefix'].'menus' => Array('class' => 'modMenu','package' => 'modx'),
-            $this->modx->config['table_prefix'].'namespaces' => Array('class' => 'modNamespace','package' => 'modx'),
-            $this->modx->config['table_prefix'].'property_set' => Array('class' => 'modPropertySet','package' => 'modx'),
-            $this->modx->config['table_prefix'].'register_messages' => Array('class' => 'modDbRegisterMessage','package' => 'modx.registry.db'),
-            $this->modx->config['table_prefix'].'register_queues' => Array('class' => 'modDbRegisterQueue','package' => 'modx.registry.db'),
-            $this->modx->config['table_prefix'].'register_topics' => Array('class' => 'modDbRegisterTopic','package' => 'modx.registry.db'),
-            $this->modx->config['table_prefix'].'session' => Array('class' => 'modSession','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_content' => Array('class' => 'modResource','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_htmlsnippets' => Array('class' => 'modChunk','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_plugin_events' => Array('class' => 'modPluginEvent','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_plugins' => Array('class' => 'modPlugin','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_snippets' => Array('class' => 'modSnippet','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_templates' => Array('class' => 'modTemplate','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_tmplvar_access' => Array('class' => 'modTemplateVarResourceGroup','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_tmplvar_contentvalues' => Array('class' => 'modTemplateVarResource','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_tmplvar_templates' => Array('class' => 'modTemplateVarTemplate','package' => 'modx'),
-            $this->modx->config['table_prefix'].'site_tmplvars' => Array('class' => 'modTemplateVar','package' => 'modx'),
-            $this->modx->config['table_prefix'].'system_eventnames' => Array('class' => 'modEvent','package' => 'modx'),
-            $this->modx->config['table_prefix'].'system_settings' => Array('class' => 'modSystemSetting','package' => 'modx'),
-            $this->modx->config['table_prefix'].'transport_packages' => Array('class' => 'modTransportPackage','package' => 'modx.transport'),
-            $this->modx->config['table_prefix'].'transport_providers' => Array('class' => 'modTransportProvider','package' => 'modx.transport'),
-            $this->modx->config['table_prefix'].'user_attributes' => Array('class' => 'modUserProfile','package' => 'modx'),
-            $this->modx->config['table_prefix'].'user_group_roles' => Array('class' => 'modUserGroupRole','package' => 'modx'),
-            $this->modx->config['table_prefix'].'user_group_settings' => Array('class' => 'modUserGroupSetting','package' => 'modx'),
-            $this->modx->config['table_prefix'].'user_messages' => Array('class' => 'modUserMessage','package' => 'modx'),
-            $this->modx->config['table_prefix'].'user_settings' => Array('class' => 'modUserSetting','package' => 'modx'),
-            $this->modx->config['table_prefix'].'users' => Array('class' => 'modUser','package' => 'modx'),
-            $this->modx->config['table_prefix'].'workspaces' => Array('class' => 'modWorkspace','package' => 'modx')
+            $prefix.'access_actiondom' => array('class' => 'modAccessActionDom','package' => 'modx'),
+            $prefix.'access_actions' => array('class' => 'modAccessAction','package' => 'modx'),
+            $prefix.'access_category' => array('class' => 'modAccessCategory','package' => 'modx'),
+            $prefix.'access_context' => array('class' => 'modAccessContext','package' => 'modx'),
+            $prefix.'access_elements' => array('class' => 'modAccessElement','package' => 'modx'),
+            $prefix.'access_media_source' => array('class' => 'modAccessMediaSource','package' => 'modx.sources'),
+            $prefix.'access_menus' => array('class' => 'modAccessMenu','package' => 'modx'),
+            $prefix.'access_permissions' => array('class' => 'modAccessPermission','package' => 'modx'),
+            $prefix.'access_policies' => array('class' => 'modAccessPolicy','package' => 'modx'),
+            $prefix.'access_policy_template_groups' => array('class' => 'modAccessPolicyTemplateGroup','package' => 'modx'),
+            $prefix.'access_policy_templates' => array('class' => 'modAccessPolicyTemplate','package' => 'modx'),
+            $prefix.'access_resource_groups' => array('class' => 'modAccessResourceGroup','package' => 'modx'),
+            $prefix.'access_resources' => array('class' => 'modAccessResource','package' => 'modx'),
+            $prefix.'access_templatevars' => array('class' => 'modAccessTemplateVar','package' => 'modx'),
+            $prefix.'actiondom' => array('class' => 'modActionDom','package' => 'modx'),
+            $prefix.'actions' => array('class' => 'modAction','package' => 'modx'),
+            $prefix.'actions_fields' => array('class' => 'modActionField','package' => 'modx'),
+            $prefix.'active_users' => array('class' => 'modActiveUser','package' => 'modx'),
+            $prefix.'categories' => array('class' => 'modCategory','package' => 'modx'),
+            $prefix.'categories_closure' => array('class' => 'modCategoryClosure','package' => 'modx'),
+            $prefix.'class_map' => array('class' => 'modClassMap','package' => 'modx'),
+            $prefix.'content_type' => array('class' => 'modContentType','package' => 'modx'),
+            $prefix.'context' => array('class' => 'modContext','package' => 'modx'),
+            $prefix.'context_resource' => array('class' => 'modContextResource','package' => 'modx'),
+            $prefix.'context_setting' => array('class' => 'modContextSetting','package' => 'modx'),
+            $prefix.'dashboard' => array('class' => 'modDashboard','package' => 'modx'),
+            $prefix.'dashboard_widget' => array('class' => 'modDashboardWidget','package' => 'modx'),
+            $prefix.'dashboard_widget_placement' => array('class' => 'modDashboardWidgetPlacement','package' => 'modx'),
+            $prefix.'document_groups' => array('class' => 'modResourceGroupResource','package' => 'modx'),
+            $prefix.'documentgroup_names' => array('class' => 'modResourceGroup','package' => 'modx'),
+            $prefix.'element_property_sets' => array('class' => 'modElementPropertySet','package' => 'modx'),
+            $prefix.'extension_packages' => array('class' => 'modExtensionPackage','package' => 'modx'),
+            $prefix.'fc_profiles' => array('class' => 'modFormCustomizationProfile','package' => 'modx'),
+            $prefix.'fc_profiles_usergroups' => array('class' => 'modFormCustomizationProfileUserGroup','package' => 'modx'),
+            $prefix.'fc_sets' => array('class' => 'modFormCustomizationSet','package' => 'modx'),
+            $prefix.'lexicon_entries' => array('class' => 'modLexiconEntry','package' => 'modx'),
+            $prefix.'manager_log' => array('class' => 'modManagerLog','package' => 'modx'),
+            $prefix.'media_sources' => array('class' => 'modMediaSource','package' => 'modx.sources'),
+            $prefix.'media_sources_contexts' => array('class' => 'modMediaSourceContext','package' => 'modx.sources'),
+            $prefix.'media_sources_elements' => array('class' => 'modMediaSourceElement','package' => 'modx.sources'),
+            $prefix.'member_groups' => array('class' => 'modUserGroupMember','package' => 'modx'),
+            $prefix.'membergroup_names' => array('class' => 'modUserGroup','package' => 'modx'),
+            $prefix.'menus' => array('class' => 'modMenu','package' => 'modx'),
+            $prefix.'namespaces' => array('class' => 'modNamespace','package' => 'modx'),
+            $prefix.'property_set' => array('class' => 'modPropertySet','package' => 'modx'),
+            $prefix.'register_messages' => array('class' => 'modDbRegisterMessage','package' => 'modx.registry.db'),
+            $prefix.'register_queues' => array('class' => 'modDbRegisterQueue','package' => 'modx.registry.db'),
+            $prefix.'register_topics' => array('class' => 'modDbRegisterTopic','package' => 'modx.registry.db'),
+            $prefix.'session' => array('class' => 'modSession','package' => 'modx'),
+            $prefix.'site_content' => array('class' => 'modResource','package' => 'modx'),
+            $prefix.'site_htmlsnippets' => array('class' => 'modChunk','package' => 'modx'),
+            $prefix.'site_plugin_events' => array('class' => 'modPluginEvent','package' => 'modx'),
+            $prefix.'site_plugins' => array('class' => 'modPlugin','package' => 'modx'),
+            $prefix.'site_snippets' => array('class' => 'modSnippet','package' => 'modx'),
+            $prefix.'site_templates' => array('class' => 'modTemplate','package' => 'modx'),
+            $prefix.'site_tmplvar_access' => array('class' => 'modTemplateVarResourceGroup','package' => 'modx'),
+            $prefix.'site_tmplvar_contentvalues' => array('class' => 'modTemplateVarResource','package' => 'modx'),
+            $prefix.'site_tmplvar_templates' => array('class' => 'modTemplateVarTemplate','package' => 'modx'),
+            $prefix.'site_tmplvars' => array('class' => 'modTemplateVar','package' => 'modx'),
+            $prefix.'system_eventnames' => array('class' => 'modEvent','package' => 'modx'),
+            $prefix.'system_settings' => array('class' => 'modSystemSetting','package' => 'modx'),
+            $prefix.'transport_packages' => array('class' => 'modTransportPackage','package' => 'modx.transport'),
+            $prefix.'transport_providers' => array('class' => 'modTransportProvider','package' => 'modx.transport'),
+            $prefix.'user_attributes' => array('class' => 'modUserProfile','package' => 'modx'),
+            $prefix.'user_group_roles' => array('class' => 'modUserGroupRole','package' => 'modx'),
+            $prefix.'user_group_settings' => array('class' => 'modUserGroupSetting','package' => 'modx'),
+            $prefix.'user_messages' => array('class' => 'modUserMessage','package' => 'modx'),
+            $prefix.'user_settings' => array('class' => 'modUserSetting','package' => 'modx'),
+            $prefix.'users' => array('class' => 'modUser','package' => 'modx'),
+            $prefix.'workspaces' => array('class' => 'modWorkspace','package' => 'modx')
         );
+
+        $this->modx->getVersionData();
+        if ($this->modx->version && version_compare($this->modx->version['full_version'], '2.4.0', '>='))
+            $modxTables[$prefix.'access_namespace'] = array('class' => 'modAccessNamespace','package' => 'modx');
+
+        return $modxTables;
     }
     /** This method returns an error
      *
