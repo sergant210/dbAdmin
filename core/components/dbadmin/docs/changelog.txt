@@ -1,7 +1,5 @@
 Changelog for dbAdmin.
 
-********* Исправить коннектор
-
 1.0.1-pl
 ==============
 - Fixed the error of checking update (wrong package name).
