@@ -20,8 +20,8 @@ class dbAdminExportTablesProcessor extends modObjectProcessor {
         } else {
             return $this->failure($this->modx->lexicon('dbadmin_table_err_ns'));
         }
-        $path = $this->modx->getOption('dbadmin_assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/').'tmp/';
-        if (!is_dir($path))return $this->failure($this->modx->lexicon('dbadmin_table_err_path'));
+        $path = $this->modx->getOption('dbadmin_assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/').'export/';
+        if (!is_dir($path) && !mkdir($path,0755)) return $this->failure($this->modx->lexicon('dbadmin_table_err_path'));
         $sql = "-- ".$this->modx->lexicon('createdon').date('j M Y, H:i')."\n\n";
         foreach ($tables as $table) {
             $sql .= $this->prepareTableCreateSql($table);

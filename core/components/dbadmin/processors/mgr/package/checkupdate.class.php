@@ -5,7 +5,7 @@
  */
 class dbAdminCheckUpdateProcessor extends modObjectProcessor {
     public $languageTopics = array('dbadmin');
-    public $package = 'hybridauth';
+    public $package = 'dbadmin';
     public $permission = '';
 
     /**
@@ -32,7 +32,6 @@ class dbAdminCheckUpdateProcessor extends modObjectProcessor {
         if ($response->isError()) {
             return $this->failure();
         }
-        $this->modx->log(modX::LOG_LEVEL_ERROR, $signature);
         return $this->success();
     }
 }

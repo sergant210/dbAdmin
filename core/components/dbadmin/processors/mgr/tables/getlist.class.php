@@ -43,7 +43,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         }
         /** @var dbAdmin $dbAdmin */
         $dbAdmin = $this->modx->getService('dbadmin', 'dbAdmin', $this->modx->getOption('dbadmin_core_path', null, $this->modx->getOption('core_path') . 'components/dbadmin/') . 'model/dbadmin/');
-        if ($dbAdmin->checkNeedUpdate()) $dbAdmin->synchonize();
+        if ($dbAdmin->checkNeedUpdate()) $dbAdmin->synchronize();
         $this->tables = $dbAdmin->getTablesStatus();
         return $c;
     }

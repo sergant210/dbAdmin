@@ -150,6 +150,7 @@ class dbAdmin {
             $this->modx->config['table_prefix'].'access_elements' => Array('class' => 'modAccessElement','package' => 'modx'),
             $this->modx->config['table_prefix'].'access_media_source' => Array('class' => 'modAccessMediaSource','package' => 'modx.sources'),
             $this->modx->config['table_prefix'].'access_menus' => Array('class' => 'modAccessMenu','package' => 'modx'),
+            //$this->modx->config['table_prefix'].'access_namespace' => Array('class' => 'modAccessNamespace','package' => 'modx'),
             $this->modx->config['table_prefix'].'access_permissions' => Array('class' => 'modAccessPermission','package' => 'modx'),
             $this->modx->config['table_prefix'].'access_policies' => Array('class' => 'modAccessPolicy','package' => 'modx'),
             $this->modx->config['table_prefix'].'access_policy_template_groups' => Array('class' => 'modAccessPolicyTemplateGroup','package' => 'modx'),
