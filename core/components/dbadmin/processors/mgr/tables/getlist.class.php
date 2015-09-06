@@ -64,29 +64,48 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         $row['actions'][] = array(
             'cls' => '',
             'icon' => 'icon icon-table',
-            'title' => $this->modx->lexicon('dbadmin_table_data'),
+            'title' => $this->modx->lexicon('dbadmin_table_view'),
             'action' => 'viewTable',
+            'button' => false,
+            'menu' => true,
+        );
+        // Update a table
+        $row['actions'][] = array(
+            'cls' => '',
+            'icon' => 'icon icon-pencil-square-o',
+            'title' => $this->modx->lexicon('dbadmin_table_update'),
+            'action' => 'updateTable',
             'button' => true,
-            'menu' => false,
+            'menu' => true,
         );
         // Export
         $row['actions'][] = array(
             'cls' => '',
-            'icon' => 'icon icon-floppy-o',
+            'icon' => 'icon icon-download',
             'title' => $this->modx->lexicon('dbadmin_table_export'),
             //'multiple' => $this->modx->lexicon('dbadmin_tables_export'),
             'action' => 'exportSelected',
             'button' => true,
-            'menu' => false,
+            'menu' => true,
         );
         // truncate
         $row['actions'][] = array(
             'cls' => '',
-            'icon' => 'icon icon-file-o',
+            'icon' => 'icon icon-eraser',
             'title' => $this->modx->lexicon('dbadmin_table_truncate'),
+            //'multiple' => $this->modx->lexicon('dbadmin_tables_truncate'),
             'action' => 'truncateSelected',
             'button' => true,
-            'menu' => false,
+            'menu' => true,
+        );
+        // Select query
+        $row['actions'][] = array(
+            'cls' => '',
+            'icon' => 'icon icon-table',
+            'title' => 'Select from',
+            'action' => 'selectQuery',
+            'button' => true,
+            'menu' => true,
         );
         // Remove
         $row['actions'][] = array(
@@ -94,9 +113,9 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
             'icon' => 'icon icon-trash-o action-red',
             'title' => $this->modx->lexicon('dbadmin_table_remove'),
             //'multiple' => $this->modx->lexicon('dbadmin_tables_remove'),
-            'action' => 'removeSelected',
+            'action' => 'removeTable',
             'button' => true,
-            'menu' => false,
+            'menu' => true,
         );
 
         return $row;

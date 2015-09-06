@@ -1,4 +1,10 @@
 <?php
+/**
+ * English permissions Lexicon Entries for dbAdmin
+ *
+ * @package dbadmin
+ * @subpackage lexicon
+ */
 $_lang['tables_list'] = 'Allow to view a list of tables.';
 $_lang['table_view'] = 'Table view permission.';
 $_lang['table_save'] = 'Table save permission.';

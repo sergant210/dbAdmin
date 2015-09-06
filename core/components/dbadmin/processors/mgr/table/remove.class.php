@@ -1,52 +1,32 @@
 <?php
 
 /**
- * Remove selected tables
+ * Remove a table
  */
-class dbAdminTableRemoveProcessor extends modObjectProcessor {
+class dbAdminTableRemoveProcessor extends modObjectRemoveProcessor {
     public $objectType = 'dbadmin_table';
     public $classKey = 'dbAdminTable';
 	public $languageTopics = array('dbadmin');
+    public $primaryKeyField = 'name';
 	public $permission = 'table_remove';
 
-
-	/**
-	 * @return array|string
-	 */
-	public function process() {
-		if (!$this->checkPermissions()) {
-			return $this->failure($this->modx->lexicon('access_denied'));
-		}
-
-        $tables = $this->getProperty('tables','');
-        if (!empty($tables)) {
-            $tables = array_map('trim',explode(',',$tables));
-        } else {
-            return $this->failure($this->modx->lexicon('dbadmin_table_err_ns'));
-        }
-		foreach ($tables as $table) {
-            try {
-                // Удаляем из таблицы карт
-                /** @var dbAdminTable $object */
-                if (!$object = $this->modx->getObject($this->classKey, $table)) {
-                    return $this->failure($this->modx->lexicon('dbadmin_table_err_nf'));
-                }
-                $object->remove();
-                // Удаляем из БД
-                $table = $this->modx->escape($table);
-                $sql = "DROP TABLE {$table}";
-                if ($stmt = $this->modx->prepare($sql)) {
-                    $stmt->execute();
-                }
-
-            } catch (Exception $e) {
-                return $this->failure($e->getMessage());
+    /**
+     * {@inheritdoc}
+     */
+    public function afterRemove() {
+        try {
+            // Удаляем из БД
+            $table = $this->modx->escape($this->object->get('name'));
+            $sql = "DROP TABLE ".$table;
+            if ($stmt = $this->modx->prepare($sql)) {
+                $stmt->execute();
             }
-		}
 
-		return $this->success();
-	}
-
+        } catch (Exception $e) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[dbAdmin] '.$e->getMessage());
+        }
+        return parent::afterRemove();
+    }
 }
 
 return 'dbAdminTableRemoveProcessor';

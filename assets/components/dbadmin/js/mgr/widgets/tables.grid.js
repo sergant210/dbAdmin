@@ -54,7 +54,7 @@ dbAdmin.grid.Tables = function (config) {
 			dataIndex: 'actions',
 			renderer: dbAdmin.utils.renderActions,
 			sortable: false,
-			width: 90,
+			width: 100,
 			id: 'actions'
 		}],
 		//autosave: true,
@@ -66,10 +66,9 @@ dbAdmin.grid.Tables = function (config) {
 		listeners: {
 			rowDblClick: function (grid, rowIndex, e) {
 				var row = grid.store.getAt(rowIndex);
-				this.updateTable(grid, e, row);
+				this.viewTable(grid, e, row);
 			}
 		},
-
 		viewConfig: {
 			forceFit: true,
 			enableRowBody: true,
@@ -108,7 +107,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 	exportSelected: function (b,o) {
 		var export_db, tables = '';
 		if (b.id == 'dbadmin-db-export') {
-			// export the whole db
+			// export the entire database
 			export_db = true;
 		} else {
 			// export selected tables
@@ -141,7 +140,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			}
 		});
 	},
-	viewTable: function (btn, e, row) {
+	viewTable: function (grid, e, row) {
 		var record = typeof(row) != 'undefined'
 			? row.data
 			: this.menu.record;
@@ -160,33 +159,50 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 							defaults: {
 								sortable: true,
 								menuDisabled: true,
-								editable: false,
+								editable: record.class != '',
+								editor:	{xtype: 'textfield'},
 								width: 70
 							}
 						});
-						for (var i = 0; i < fields['name'].length; i++) {
-							colModel.columns[i] = { header: fields['name'][i], dataIndex: fields['name'][i]};
-							switch (fields['type'][i]) {
-								case 'text':
+						for (var i = 0; i < fields.length; i++) {
+							colModel.columns[i] = {
+								header: fields[i]['name'],
+								dataIndex: fields[i]['name']
+							};
+							switch (fields[i]['type']) {
+								case 'string':
+									colModel.columns[i].editor = {xtype: 'textarea'};
 									colModel.columns[i].width = 100;
 									break;
-								case 'num':
+								case 'number':
+									colModel.columns[i].width = 30;
+									break;
+								case 'actions':
+									colModel.columns[i].header = '<i class="icon icon-cog"></i>';
+									colModel.columns[i].id = 'actions';
+									colModel.columns[i].sortable = false;
 									colModel.columns[i].width = 50;
+									colModel.columns[i].renderer = dbAdmin.utils.renderActions;
+									colModel.columns[i].fixed = true;
+									colModel.columns[i].editable = false;
 									break;
 							}
-							if (fields['name'][i] == 'id') {
-								colModel.columns[i].width = 20;
+							if (fields[i]['name'] == 'id') {
+								colModel.columns[i].width = 40;
+								colModel.columns[i].fixed = true;
 							}
 						}
 						colModel.columns[0].menuDisabled = false;
-						var w = MODx.load({
+						if (this.dataGridTable) this.dataGridTable.close();
+						this.dataGridTable = MODx.load({
 							xtype: 'dbadmin-table-data-window',
 							table: record.name,
 							class: record.class,
 							package: record.package,
-							gridFields: fields['name'],
+							gridFields: fields,
 							gridColumns: colModel
-						}).show();
+						});
+						this.dataGridTable.show(Ext.EventObject.target);
 					}, scope: this
 				},
 				failure: {
@@ -197,7 +213,8 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			}
 		});
 	},
-	updateTable: function (btn, e, row) {
+	updateTable: function (g,e) {
+		var row = this.getSelectionModel().getSelected();
 		if (typeof(row) != 'undefined') {
 			this.menu.record = row.data;
 		}
@@ -205,32 +222,96 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			return false;
 		}
 		row.data.oldName = row.data.name;
-
-		var w = MODx.load({
-			xtype: 'dbadmin-table-window-update',
-			id: Ext.id(),
+		if (!this.updateWindow) {
+			this.updateWindow = MODx.load({
+				xtype: 'dbadmin-table-window-update',
+				//id: Ext.id(),
+				listeners: {
+					success: {
+						fn: function () {
+							this.refresh();
+						}, scope: this
+					}
+				}
+			});
+		}
+		this.updateWindow.reset();
+		this.updateWindow.setValues(row.data);
+		this.updateWindow.show(e.target);
+	},
+	selectQuery: function () {
+		var row = this.getSelectionModel().getSelected();
+		if (typeof(row) != 'undefined') {
+			this.menu.record = row.data;
+		}
+		else if (!this.menu.record) {
+			return false;
+		}
+		MODx.Ajax.request({
+			url: dbAdmin.config.connector_url,
+			params: {
+				action: 'mgr/table/getfields',
+				table: row.data.name,
+				forselect: 1
+			},
 			listeners: {
 				success: {
-					fn: function () {
+					fn: function (r) {
+						var fields = r.fields || '*',
+							query = 'SELECT ' + fields + ' FROM `' + row.data.name+'`';
+						//Ext.getCmp('dbadmin-sql-query').setValue('');
+						Ext.getCmp('dbadmin-sql-query').setValue(query);
+						Ext.getCmp('dbadmin-tabpanel').setActiveTab('dbadmin-sql-tab');
+
+					}, scope: this
+				},
+				failure: {
+					fn: function (r) {}, scope: this
+				}
+			}
+		});
+		return true;
+	},
+	removeTable: function () {
+		var row = this.getSelectionModel().getSelected();
+		if (typeof(row) != 'undefined') {
+			this.menu.record = row.data;
+		}
+		else if (!this.menu.record) {
+			return false;
+		}
+		var name = row.data.name;
+		MODx.msg.confirm({
+			title: _('dbadmin_table_remove'),
+			text: _('dbadmin_table_remove_confirm'),
+			url: this.config.url,
+			params: {
+				action: 'mgr/table/remove',
+				name: name
+			},
+			listeners: {
+				success: {
+					fn: function (r) {
 						this.refresh();
 					}, scope: this
 				}
 			}
 		});
-		w.reset();
-		w.setValues(row.data);
-		w.show(e.target);
-
+		return true;
 	},
 	removeSelected: function () {
 		var tables = this.getSelectedAsList();
 		if (tables === false) return false;
 		MODx.msg.confirm({
-			title: _('dbadmin_tables_remove'),
-			text: _('dbadmin_tables_remove_confirm'),
+			title: tables.split(',').length > 1
+				? _('dbadmin_tables_remove')
+				: _('dbadmin_table_remove'),
+			text: tables.split(',').length > 1
+				? _('dbadmin_tables_remove_confirm')
+				: _('dbadmin_table_remove_confirm'),
 			url: this.config.url,
 			params: {
-				action: 'mgr/table/remove',
+				action: 'mgr/tables/remove',
 				tables: tables
 			},
 			listeners: {
@@ -247,11 +328,15 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		var tables = this.getSelectedAsList();
 		if (tables === false) return false;
 		MODx.msg.confirm({
-			title: _('dbadmin_tables_truncate'),
-			text: _('dbadmin_tables_truncate_confirm'),
+			title: tables.split(',').length > 1
+				? _('dbadmin_tables_truncate')
+				: _('dbadmin_table_truncate'),
+			text: tables.split(',').length > 1
+				? _('dbadmin_tables_truncate_confirm')
+				: _('dbadmin_table_truncate_confirm'),
 			url: this.config.url,
 			params: {
-				action: 'mgr/table/truncate',
+				action: 'mgr/tables/truncate',
 				tables: tables
 			},
 			listeners: {
@@ -273,13 +358,13 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		}, {
 			text: _('bulk_actions'),
 			menu: [{
-				text: '<i class="icon icon-floppy-o"></i> ' + _('dbadmin_selected_export'),
+				text: '<i class="icon icon-download"></i> ' + _('dbadmin_selected_export'),
 				id: 'dbadmin-menu-selected-export',
 				handler: this.exportSelected,
 				style: {padding: '3px 10px !important;'},
 				scope: this
 			}, {
-				text: '<i class="icon icon-file-o"></i> ' + _('dbadmin_selected_truncate'),
+				text: '<i class="icon icon-eraser"></i> ' + _('dbadmin_selected_truncate'),
 				id: 'dbadmin-menu-selected-truncate',
 				handler: this.truncateSelected,
 				scope: this

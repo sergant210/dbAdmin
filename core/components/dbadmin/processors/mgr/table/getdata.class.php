@@ -54,7 +54,6 @@ class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
                 $foundClass = false;
             }
         }
-        /* query for chunks */
         if ($foundClass) {
             $c = $this->modx->newQuery($this->classKey);
             $c->select($this->modx->getSelectColumns($this->classKey));
@@ -91,6 +90,18 @@ class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
         }
         foreach ($data['results'] as &$row) {
             $row = array_map('htmlspecialchars',$row);
+            $row['actions'] = array();
+            if ($foundClass) {
+                // Remove row
+                $row['actions'][] = array(
+                    'cls' => '',
+                    'icon' => 'icon icon-trash-o action-red',
+                    'title' => $this->modx->lexicon('dbadmin_row_remove'),
+                    'action' => 'removeRow',
+                    'button' => true,
+                    'menu' => true,
+                );
+            }
         }
 
         return $data;

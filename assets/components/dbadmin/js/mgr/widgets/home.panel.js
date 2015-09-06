@@ -11,6 +11,7 @@ dbAdmin.panel.Home = function (config) {
 			style: {margin: '15px 0'}
 		}, {
 			xtype: 'modx-tabs',
+			id: 'dbadmin-tabpanel',
 			defaults: {border: false, autoHeight: true},
 			border: true,
 			hideMode: 'offsets',
@@ -101,6 +102,7 @@ dbAdmin.panel.Home = function (config) {
 					listeners: {
 						click: function () {
 							Ext.getCmp('dbadmin-sql-query').setValue("");
+							Ext.getCmp('dbadmin-sql-query-result').setValue("");
 						}
 					}
 				},{

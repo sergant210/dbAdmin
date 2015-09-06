@@ -1,5 +1,12 @@
 Changelog for dbAdmin.
 
+1.1.0-pl
+==============
+- Added the ability to edit the selected cell in tables with a class.
+- Auto-update the list of tables.
+- Added Magic button to define a class for table.
+- Added 'Select from' button to the tables grid that adds 'Select from' script for selected table to the SQL query editor.
+
 1.0.1-pl
 ==============
 - Fixed the error of checking update (wrong package name).

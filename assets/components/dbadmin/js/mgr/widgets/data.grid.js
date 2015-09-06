@@ -5,11 +5,10 @@ dbAdmin.window.Data = function (config) {
 	}
 	Ext.applyIf(config, {
 		title: _('dbadmin_table')+' `'+ config.table + '`',
-		closeAction: 'close',
 		width: 1000,
 		maxHeight: 800,
 		autoHeight: true,
-		//stateful: false,
+		layout: 'fit',
 		//modal: true,
 		items: [{
 			xtype: 'dbadmin-grid-table-data',
@@ -27,7 +26,7 @@ dbAdmin.window.Data = function (config) {
 		buttons: [{
 			text: _('dbadmin_close'),
 			id: 'dbadmin-table-data-window-close-btn',
-			handler: function(){config.closeAction !== 'close' ? this.hide() : this.close();},
+			handler: function(){this.hide();},
 			scope: this
 		}]
 	});
@@ -52,8 +51,7 @@ dbAdmin.grid.Data = function (config) {
 			showPreview: true,
 			scrollOffset: 0
 		},
-		//autosave: config.class != '',
-		autosave: false,
+		autosave: config.class != '',
 		paging: true,
 		pageSize: 10,
 		remoteSort: true
@@ -65,18 +63,19 @@ dbAdmin.grid.Data = function (config) {
 };
 Ext.extend(dbAdmin.grid.Data, MODx.grid.Grid, {
 	saveRecord: function(e) {
-		var oldV = e.originalValue,
-			newV = e.value.replace(/^\s+/g, '');
-		if (!newV || oldV==newV) {
+		var oldValue = e.originalValue,
+			newValue = e.value.replace(/^\s+/g, '');
+		if (oldValue==newValue) {
 			e.record.reject();
 			return false;
 		}
+		var data = Ext.util.JSON.encode(e.record.data);
+
 		MODx.Ajax.request({
 			url: this.config.url,
 			params: {
 				action: 'mgr/table/updatefromgrid',
-				old: oldV,
-				new: newV,
+				data: data,
 				class: this.config.class,
 				package: this.config.package
 			},
@@ -98,6 +97,53 @@ Ext.extend(dbAdmin.grid.Data, MODx.grid.Grid, {
 				}
 			}
 		});
+	},
+	removeRow: function (e) {
+		var row = this.getSelectionModel().getSelected();
+		if (typeof(row) != 'undefined') {
+			this.menu.record = row.data;
+		}
+		else if (!this.menu.record) {
+			return false;
+		}
+		var data = Ext.util.JSON.encode(this.menu.record);
+		MODx.msg.confirm({
+			title: _('dbadmin_row_remove'),
+			text: _('dbadmin_row_remove_confirm'),
+			url: this.config.url,
+			params: {
+				action: 'mgr/table/removerow',
+				data: data,
+				class: this.config.class,
+				package: this.config.package
+			},
+			listeners: {
+				success: {
+					fn: function (r) {
+						this.refresh();
+					}, scope: this
+				}
+			}
+		});
+		return true;
+	},
+	onClick: function (e) {
+		var elem = e.getTarget();
+		if (elem.nodeName == 'BUTTON') {
+			var row = this.getSelectionModel().getSelected();
+			if (typeof(row) != 'undefined') {
+				var action = elem.getAttribute('action');
+				if (action == 'showMenu') {
+					var ri = this.getStore().find('id', row.id);
+					return this._showMenu(this, ri, e);
+				}
+				else if (typeof this[action] === 'function') {
+					this.menu.record = row.data;
+					return this[action](this, e);
+				}
+			}
+		}
+		return this.processEvent('click', e);
 	}
 });
 Ext.reg('dbadmin-grid-table-data', dbAdmin.grid.Data);

@@ -18,7 +18,7 @@ dbAdmin allows you to manage your MySql tables.
 - export data to text file.
 - execute sql queries.
 
-[![](https://file.modx.pro/files/5/e/8/5e86a866604d5af39e5d9aa9aa3438e7s.jpg)](https://file.modx.pro/files/5/e/8/5e86a866604d5af39e5d9aa9aa3438e7.png)
+[![](https://file.modx.pro/files/7/d/9/7d9bbd55381eb03ed3022f179d6dfa6bs.jpg)](https://file.modx.pro/files/7/d/9/7d9bbd55381eb03ed3022f179d6dfa6b.png)
 
 A short [video](https://youtu.be/Qnm2a8vsqiU)
 ## Improvements

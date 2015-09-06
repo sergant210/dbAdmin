@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Update the table data from grid
+ * Remove a record from the table
  */
-class dbAdminUpdateFromGridProcessor extends modObjectUpdateProcessor {
+class dbAdminRemoveTableRowProcessor extends modObjectRemoveProcessor {
     public $objectType = 'dbadmin_table';
     public $classKey = '';
     public $primaryKeyFields = '';
@@ -15,6 +15,7 @@ class dbAdminUpdateFromGridProcessor extends modObjectUpdateProcessor {
      */
     public function initialize() {
         $data = $this->getProperty('data');
+$this->modx->log(modX::LOG_LEVEL_ERROR, $data);
         if (empty($data)) return $this->modx->lexicon('dbadmin_invalid_data');
         $properties = $this->modx->fromJSON($data);
         $this->setProperties($properties);
@@ -54,4 +55,4 @@ class dbAdminUpdateFromGridProcessor extends modObjectUpdateProcessor {
     }
 }
 
-return 'dbAdminUpdateFromGridProcessor';
+return 'dbAdminRemoveTableRowProcessor';

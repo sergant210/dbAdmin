@@ -13,7 +13,7 @@ $_lang['dbadmin_table_rows'] = 'Строки';
 $_lang['dbadmin_table_size'] = 'Размер, Кb';
 $_lang['dbadmin_table_actions'] = 'Действия';
 $_lang['dbadmin_enter_sql_query'] = 'Введите SQL запрос. Вместо названий таблиц можно использовать классы (SELECT * FROM {modUser})';
-$_lang['dbadmin_query_result'] = 'Результат';
+$_lang['dbadmin_query_result'] = 'Результат (массив)';
 $_lang['dbadmin_class'] = 'Класс';
 $_lang['dbadmin_package'] = 'Пакет';
 
@@ -23,14 +23,19 @@ $_lang['dbadmin_tables_export'] = 'Экспорт таблиц';
 $_lang['dbadmin_selected_export'] = 'Экспортировать выбранное';
 $_lang['dbadmin_table_remove'] = 'Удалить таблицу';
 $_lang['dbadmin_tables_remove'] = 'Удалить таблицы';
+$_lang['dbadmin_row_remove'] = 'Удалить запись';
 $_lang['dbadmin_selected_remove'] = 'Удалить выбранное';
 $_lang['dbadmin_table_remove_confirm'] = 'Вы уверены, что хотите удалить эту таблицу?';
 $_lang['dbadmin_tables_remove_confirm'] = 'Вы уверены, что хотите удалить выбранные таблицы?';
+$_lang['dbadmin_row_remove_confirm'] = 'Вы уверены, что хотите удалить запись?';
 $_lang['dbadmin_table_truncate'] = 'Очистить таблицу';
 $_lang['dbadmin_tables_truncate'] = 'Очистить таблицы';
+$_lang['dbadmin_table_truncate_confirm'] = 'Вы уверены, что хотите удалить все записи из данной таблицы?';
 $_lang['dbadmin_tables_truncate_confirm'] = 'Вы уверены, что хотите удалить все записи из выбранных таблиц?';
 $_lang['dbadmin_selected_truncate'] = 'Очистить выбранное';
-$_lang['dbadmin_table_data'] = 'Посмотреть таблицу';
+$_lang['dbadmin_table_update'] = 'Редактировать запись';
+$_lang['dbadmin_table_view'] = 'Посмотреть таблицу';
+$_lang['dbadmin_table_set_class'] = 'Определить класс';
 $_lang['dbadmin_rows_number'] = 'Количество записей: ';
 $_lang['dbadmin_package_update'] = ' <i class="icon icon-exclamation-triangle package-update" title="Доступна новая версия dbAdmin"></i>';
 
@@ -54,6 +59,8 @@ $_lang['dbadmin_sql_executed_success'] = 'Запрос выполнен успе
 $_lang['dbadmin_sql_executed_failed'] = 'Ошибка выполнения запроса!';
 $_lang['dbadmin_table_err_rename'] = 'Ошибка переименования таблицы!';
 $_lang['dbadmin_sync'] = 'Ошибка синхронизации таблиц!';
+$_lang['dbadmin_invalid_data'] = 'Неверные данные!';
+$_lang['dbadmin_no_package'] = 'Не указан пакет!';
 // log
 $_lang['dbadmin_err_load_class'] = '[dbAdmin] Не получилось загрузить указанный класс!';
 $_lang['dbadmin_err_path'] = '[dbAdmin] Путь для указанного пакета не найден!';

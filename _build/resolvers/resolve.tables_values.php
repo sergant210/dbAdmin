@@ -13,7 +13,6 @@ if ($object->xpdo) {
 			// Fill the table dbadmin_tables_map
 			if (!$modx->getCount('dbAdminTable')) {
                 $tables = array_merge($dbAdmin->getDbTables(),$dbAdmin->getSystemTablesFromArray());
-//$modx->log(modX::LOG_LEVEL_ERROR, print_r($tables));
                  foreach ($tables as $name=>$info) {
                      $obj = $modx->newObject('dbAdminTable');
                      $obj->set('name',$name);
