@@ -2,7 +2,7 @@ Changelog for dbAdmin.
 
 1.1.0-pl
 ==============
-- Added the ability to edit and remove the selected cell in tables with a class.
+- Added the ability to edit the selected cell in tables with a class or remove entire row.
 - Auto-update the list of tables.
 - Added Magic button to define a class for table.
 - Added 'Select from' button to the tables grid that adds 'Select from' script for selected table to the SQL query editor.

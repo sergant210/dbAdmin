@@ -34,6 +34,7 @@ $_lang['dbadmin_table_truncate_confirm'] = 'Are you sure you want to truncate th
 $_lang['dbadmin_tables_truncate_confirm'] = 'Are you sure you want to truncate the selected tables?';
 $_lang['dbadmin_selected_truncate'] = 'Truncate selected';
 $_lang['dbadmin_table_update'] = 'Edit the record';
+$_lang['dbadmin_table_properties'] = 'Table properties';
 $_lang['dbadmin_table_view'] = 'View the table';
 $_lang['dbadmin_table_set_class'] = 'Set class';
 $_lang['dbadmin_rows_number'] = 'Total: ';

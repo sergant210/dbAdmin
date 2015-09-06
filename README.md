@@ -19,6 +19,7 @@ dbAdmin allows you to manage your MySql tables.
 - execute sql queries.
 
 [![](https://file.modx.pro/files/7/d/9/7d9bbd55381eb03ed3022f179d6dfa6bs.jpg)](https://file.modx.pro/files/7/d/9/7d9bbd55381eb03ed3022f179d6dfa6b.png)
+[![](https://file.modx.pro/files/c/b/a/cba093ec82685bd808a4050a4ef4d7e9s.jpg)](https://file.modx.pro/files/c/b/a/cba093ec82685bd808a4050a4ef4d7e9.png)
 
 A short [video](https://youtu.be/Qnm2a8vsqiU)
 ## Improvements

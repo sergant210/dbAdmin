@@ -4,7 +4,7 @@ dbAdmin.window.UpdateTable = function (config) {
 		config.id = 'dbadmin-table-window-update';
 	}
 	Ext.applyIf(config, {
-		title: _('dbadmin_table_update'),
+		title: _('dbadmin_table_properties'),
 		width: 400,
 		autoHeight: false,
 		url: dbAdmin.config.connector_url,

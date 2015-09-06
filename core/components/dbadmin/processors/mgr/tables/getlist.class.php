@@ -73,7 +73,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         $row['actions'][] = array(
             'cls' => '',
             'icon' => 'icon icon-pencil-square-o',
-            'title' => $this->modx->lexicon('dbadmin_table_update'),
+            'title' => $this->modx->lexicon('dbadmin_table_properties'),
             'action' => 'updateTable',
             'button' => true,
             'menu' => true,

@@ -34,6 +34,7 @@ $_lang['dbadmin_table_truncate_confirm'] = 'Вы уверены, что хоти
 $_lang['dbadmin_tables_truncate_confirm'] = 'Вы уверены, что хотите удалить все записи из выбранных таблиц?';
 $_lang['dbadmin_selected_truncate'] = 'Очистить выбранное';
 $_lang['dbadmin_table_update'] = 'Редактировать запись';
+$_lang['dbadmin_table_properties'] = 'Свойства таблицы';
 $_lang['dbadmin_table_view'] = 'Посмотреть таблицу';
 $_lang['dbadmin_table_set_class'] = 'Определить класс';
 $_lang['dbadmin_rows_number'] = 'Количество записей: ';
