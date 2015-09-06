@@ -15,7 +15,6 @@ class dbAdminRemoveTableRowProcessor extends modObjectRemoveProcessor {
      */
     public function initialize() {
         $data = $this->getProperty('data');
-$this->modx->log(modX::LOG_LEVEL_ERROR, $data);
         if (empty($data)) return $this->modx->lexicon('dbadmin_invalid_data');
         $properties = $this->modx->fromJSON($data);
         $this->setProperties($properties);
