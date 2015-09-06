@@ -101,7 +101,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         // Select query
         $row['actions'][] = array(
             'cls' => '',
-            'icon' => 'icon icon-table',
+            'icon' => 'icon icon-file-code-o ',
             'title' => 'Select from',
             'action' => 'selectQuery',
             'button' => true,

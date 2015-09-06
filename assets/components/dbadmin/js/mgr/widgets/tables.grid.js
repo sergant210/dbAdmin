@@ -31,7 +31,8 @@ dbAdmin.grid.Tables = function (config) {
 			header: _('dbadmin_table_type'),
 			dataIndex: 'type',
 			sortable: false,
-			width: 70
+			fixed: true,
+			width: 100
 		}, {
 			header: _('dbadmin_table_collation'),
 			dataIndex: 'collation',
@@ -42,19 +43,22 @@ dbAdmin.grid.Tables = function (config) {
 			dataIndex: 'rows',
 			sortable: false,
 			menuDisabled: true,
-			width: 50
+			fixed: true,
+			width: 70
 		}, {
 			header: _('dbadmin_table_size'),
 			dataIndex: 'size',
 			sortable: false,
 			menuDisabled: true,
-			width: 60
+			fixed: true,
+			width: 90
 		}, {
 			header: _('dbadmin_table_actions'),
 			dataIndex: 'actions',
 			renderer: dbAdmin.utils.renderActions,
 			sortable: false,
-			width: 100,
+			width: 170,
+			fixed: true,
 			id: 'actions'
 		}],
 		//autosave: true,
