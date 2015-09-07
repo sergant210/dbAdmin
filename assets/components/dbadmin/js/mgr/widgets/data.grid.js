@@ -7,8 +7,9 @@ dbAdmin.window.Data = function (config) {
 		title: _('dbadmin_table')+' `'+ config.table + '`',
 		width: 1000,
 		maxHeight: 800,
-		autoHeight: true,
-		layout: 'fit',
+		autoHeight: false,
+		//stateful: false,
+		//layout: 'fit',
 		//modal: true,
 		items: [{
 			xtype: 'dbadmin-grid-table-data',
@@ -52,6 +53,7 @@ dbAdmin.grid.Data = function (config) {
 			scrollOffset: 0
 		},
 		autosave: config.class != '',
+		height: '100%',
 		paging: true,
 		pageSize: 10,
 		remoteSort: true
