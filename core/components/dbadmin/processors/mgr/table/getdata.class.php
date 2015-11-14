@@ -39,7 +39,7 @@ class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
         $data = array();
         $limit = intval($this->getProperty('limit'));
         $start = intval($this->getProperty('start'));
-        $package = strtolower(trim($this->getProperty('package','')));
+        $package = strtolower($this->getProperty('package',''));
         $path = MODX_CORE_PATH.'components/'.$package.'/model/';
         $foundClass = true;
         if (empty($this->classKey)) {
@@ -53,6 +53,8 @@ class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $foundClass = false;
             }
+        } elseif ($package != 'modx') {
+            $this->modx->addPackage($package, $this->modx->getOption('core_path').'model/');
         }
         if ($foundClass) {
             $c = $this->modx->newQuery($this->classKey);
@@ -61,7 +63,7 @@ class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
             $data['total'] = $this->modx->getCount($this->classKey, $c);
             $c = $this->prepareQueryAfterCount($c);
 
-            $sortKey = empty($this->getProperty('sort')) ? $this->modx->getPK($this->classKey) : $this->getProperty('sort');
+            $sortKey = $this->getProperty('sort','') == '' ? $this->modx->getPK($this->classKey) : $this->getProperty('sort');
             if (!is_array($sortKey)) $sortKey = array($sortKey);
             $sortKey = $this->modx->getSelectColumns($this->classKey, $this->getProperty('sortAlias', $this->classKey), '', $sortKey);
             $c->sortby($sortKey, $this->getProperty('dir'));
