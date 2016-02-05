@@ -1,4 +1,7 @@
-Changelog for dbAdmin.
+1.1.1-pl
+==============
+- Fixed some errors.
+- Add support of PHP 5.3.
 
 1.1.0-pl
 ==============

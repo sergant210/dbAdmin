@@ -102,6 +102,8 @@ class dbAdminExportTablesProcessor extends modObjectProcessor {
                         $val,
                         array("\n" => '\n', "\r" => '\r', "\t" => '\t')
                     );
+                } elseif (!is_numeric($rows[$i][$j])) {
+                    $sql .= '\''.$rows[$i][$j].'\'';
                 } else {
                     $sql .= $rows[$i][$j];
                 }

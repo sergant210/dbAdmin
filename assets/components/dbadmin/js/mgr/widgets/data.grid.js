@@ -5,11 +5,13 @@ dbAdmin.window.Data = function (config) {
 	}
 	Ext.applyIf(config, {
 		title: _('dbadmin_table')+' `'+ config.table + '`',
-		width: 1000,
+		width: 'auto',
+		height: 650,
 		maxHeight: 800,
 		autoHeight: false,
-		//stateful: false,
-		//layout: 'fit',
+		autoScroll: true,
+		stateful: true,
+		//layout: 'anchor',
 		//modal: true,
 		items: [{
 			xtype: 'dbadmin-grid-table-data',
@@ -17,6 +19,8 @@ dbAdmin.window.Data = function (config) {
 			columns: config.gridColumns,
 			class: config.class,
 			package: config.package,
+			//region:'center',
+			//margins: '5 5 0',
 			baseParams: {
 				action: 'mgr/table/getdata',
 				table: config.table,
@@ -46,14 +50,14 @@ dbAdmin.grid.Data = function (config) {
 	Ext.applyIf(config, {
 		url: dbAdmin.config.connector_url,
 		viewConfig: {
-			forceFit: true,
-			enableRowBody: true,
 			autoFill: true,
-			showPreview: true,
+			enableRowBody: true,
+			forceFit: false,
 			scrollOffset: 0
 		},
 		autosave: config.class != '',
-		height: '100%',
+		autoWidth: true,
+		autoScroll: true,
 		paging: true,
 		pageSize: 10,
 		remoteSort: true
@@ -62,6 +66,13 @@ dbAdmin.grid.Data = function (config) {
 	if (config.autosave) {
 		this.on('afteredit',this.saveRecord,this);
 	}
+	this.store.on('load', function (o) {
+		if (this.getStore().getTotalCount() < 10 ) {
+			var w = Ext.getCmp('dbadmin-table-data-window');
+			w.autoHeight = true;
+			w.setHeight(300);
+		}
+	}, this);
 };
 Ext.extend(dbAdmin.grid.Data, MODx.grid.Grid, {
 	saveRecord: function(e) {
@@ -147,5 +158,8 @@ Ext.extend(dbAdmin.grid.Data, MODx.grid.Grid, {
 		}
 		return this.processEvent('click', e);
 	}
+	/*,onRender: function () {
+		console.log(this);
+	}*/
 });
 Ext.reg('dbadmin-grid-table-data', dbAdmin.grid.Data);

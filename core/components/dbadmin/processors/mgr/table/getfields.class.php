@@ -10,7 +10,7 @@ class dbAdminTableFieldsGetProcessor extends modObjectProcessor {
      * @return mixed
      */
     public function process() {
-        $table = trim($this->getProperty('table',''));
+        $table = $this->getProperty('table','');
         $forSelect = $this->getProperty('forselect',false);
         if (empty($table)) return $this->failure($this->modx->lexicon('dbadmin_table_err_nf'));
         $query = "SHOW COLUMNS FROM ".$table;

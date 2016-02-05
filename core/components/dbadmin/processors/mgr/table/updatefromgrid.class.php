@@ -34,6 +34,8 @@ class dbAdminUpdateFromGridProcessor extends modObjectUpdateProcessor {
             } else {
                 $this->classKey = '';
             }
+        } elseif ($package !== 'modx') {
+            $this->modx->addPackage($package, $this->modx->getOption('core_path').'model/');
         }
         if (!$this->classKey) return false;
 
