@@ -132,7 +132,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 				success: {
 					fn: function (r) {
 						panel.el.unmask();
-						location.href = this.url+"?action=mgr/tables/download&HTTP_MODAUTH="+MODx.siteId;
+						location.href = this.url+"?action=mgr/tables/download&name="+ r.object.name+"&HTTP_MODAUTH="+MODx.siteId;
 					}, scope: this
 				},
 				failure: {

@@ -14,23 +14,29 @@ class dbAdminExportTablesProcessor extends modObjectProcessor {
         $tables = $this->getProperty('tables','');
         if ($this->getProperty('export_db') == 'true') {
             $tables = $this->getTables();
+            $fileName = $this->modx->config['dbname'].'_'.date('Ymd_His').'.sql';
         } elseif (!empty($tables)) {
             $tables = array_map('trim', explode(',', $tables));
             sort($tables);
+            $fileName = 'custom_'.date('Ymd_His').'.sql';
         } else {
             return $this->failure($this->modx->lexicon('dbadmin_table_err_ns'));
         }
         $path = $this->modx->getOption('dbadmin_assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/').'export/';
-        if (!is_dir($path) && !mkdir($path,0755)) return $this->failure($this->modx->lexicon('dbadmin_table_err_path'));
+        if (!is_dir($path) && !mkdir($path, 0755)) {
+            return $this->failure($this->modx->lexicon('dbadmin_table_err_path'));
+        }
         $sql = "-- ".$this->modx->lexicon('createdon').date('j M Y, H:i')."\n\n";
         foreach ($tables as $table) {
             $sql .= $this->prepareTableCreateSql($table);
             $sql .= $this->getTableData($table);
             $sql .= "\n\n-- --------------------------------------------------------\n\n";
         }
-        if (!empty($tables)) file_put_contents($path.'db_backup.sql', $sql );
+        if (!empty($tables)) {
+            file_put_contents($path . $fileName, $sql);
+        }
 
-        return $this->success();
+        return $this->success('',array('name'=>$fileName));
     }
 
     /**

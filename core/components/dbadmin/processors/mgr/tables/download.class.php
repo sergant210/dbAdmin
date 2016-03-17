@@ -12,7 +12,7 @@ class dbAdminExportTablesProcessor extends modObjectProcessor {
      * @return array|string
      */
     public function process() {
-        $filename = 'db_backup.sql';
+        $filename = $this->getProperty('name','db_backup.sql');
         $path = $this->modx->getOption('dbadmin_assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/').'export/';
         $f = $path.$filename;
         if (!file_exists($f)) {

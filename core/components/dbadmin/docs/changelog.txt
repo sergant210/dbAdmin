@@ -1,6 +1,10 @@
+1.1.2-pl
+==============
+- Changed file name format of database backup to "database_date_time.sql". For example, "modx_20160317_090155.sql".
+
 1.1.1-pl
 ==============
-- Fixed some errors.
+- Fixed some bugs.
 - Add support of PHP 5.3.
 
 1.1.0-pl
