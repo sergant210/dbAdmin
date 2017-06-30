@@ -44,6 +44,7 @@ $_lang['dbadmin_execute_sql'] = 'Exexute SQL query';
 $_lang['dbadmin_execute'] = 'Execute';
 $_lang['dbadmin_close'] = 'Close';
 $_lang['dbadmin_clear'] = 'Clear';
+$_lang['dbadmin_output_type'] = 'Output type';
 
 $_lang['createdon'] = 'Created on: ';
 $_lang['table_structure'] = 'Table structure';

@@ -3,7 +3,7 @@ dbAdmin.utils.renderBoolean = function (value, props, row) {
 	return value
 		? String.format('<span class="green">{0}</span>', _('yes'))
 		: String.format('<span class="red">{0}</span>', _('no'));
-}
+};
 
 dbAdmin.utils.getMenu = function (actions, grid, selected) {
 	var menu = [];
@@ -82,3 +82,21 @@ dbAdmin.utils.renderActions = function (value, props, row) {
 		res.join('')
 	);
 };
+
+dbAdmin.combo.Types = function(config) {
+	config = config || {};
+	Ext.applyIf(config,{
+		hiddenName: 'outputType',
+		emptyText: _('dbadmin_output_type'),
+		triggerAction: 'all',
+		mode: 'local',
+		hideMode: 'offsets',
+		autoScroll: true,
+		maxHeight: 200,
+		store: [['var_export','var_export'],['print_r','print_r']],
+		editable: false
+	});
+	dbAdmin.combo.Types.superclass.constructor.call(this,config);
+};
+Ext.extend(dbAdmin.combo.Types,MODx.combo.ComboBox);
+Ext.reg('dbadmin-output-types',dbAdmin.combo.Types);

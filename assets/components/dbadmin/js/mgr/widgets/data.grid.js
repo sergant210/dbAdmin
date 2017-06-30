@@ -5,12 +5,12 @@ dbAdmin.window.Data = function (config) {
 	}
 	Ext.applyIf(config, {
 		title: _('dbadmin_table')+' `'+ config.table + '`',
-		width: 'auto',
+		width: 1200,
 		height: 650,
 		maxHeight: 800,
 		autoHeight: false,
 		autoScroll: true,
-		stateful: true,
+		stateful: false,
 		//layout: 'anchor',
 		//modal: true,
 		items: [{
@@ -50,10 +50,11 @@ dbAdmin.grid.Data = function (config) {
 	Ext.applyIf(config, {
 		url: dbAdmin.config.connector_url,
 		viewConfig: {
-			autoFill: true,
+			autoFill: false,
 			enableRowBody: true,
+			showPreview: true,
 			forceFit: false,
-			scrollOffset: 0
+			scrollOffset: 20
 		},
 		autosave: config.class != '',
 		autoWidth: true,

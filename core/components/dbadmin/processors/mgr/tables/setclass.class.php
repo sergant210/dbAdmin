@@ -22,13 +22,14 @@ class dbAdminSetClassProcessor extends modObjectUpdateProcessor {
             if (empty($package)) {
                 return $this->modx->lexicon('dbadmin_no_package');
             }
+            $dbtype = $this->modx->getOption('dbtype', null, 'mysql');
             if (strpos($package, 'modx') !== false) {
-                $schemaFile = MODX_CORE_PATH . 'model/schema/modx.mysql.schema.xml';
+                $schemaFile = MODX_CORE_PATH . "model/schema/{$package}.{$dbtype}.schema.xml";
             } else {
-                $schemaFile = MODX_CORE_PATH . 'components/' . $package . '/model/schema/' . $package . '.mysql.schema.xml';
+                $schemaFile = MODX_CORE_PATH . "components/{$package}/model/schema/{$package}.{$dbtype}.schema.xml";
             }
             if (!is_file($schemaFile)) {
-                $schemaFile = MODX_CORE_PATH . 'components/' . $package . '/model/' . $package . '/' . $package . '.mysql.schema.xml';
+                $schemaFile = MODX_CORE_PATH . "components/{$package}/model/{$package}/{$package}.{$dbtype}.schema.xml";
             }
             if (is_file($schemaFile)) {
                 $schema = new SimpleXMLElement($schemaFile, 0, true);

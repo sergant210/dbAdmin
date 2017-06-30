@@ -10,6 +10,7 @@ class dbAdminHomeManagerController extends dbAdminMainController {
      * @param array $scriptProperties
      */
     public function process(array $scriptProperties = array()) {
+        $this->modx->invokeEvent('OnSnipFormPrerender');
     }
 
 
@@ -46,6 +47,6 @@ class dbAdminHomeManagerController extends dbAdminMainController {
      * @return string
      */
     public function getTemplateFile() {
-        return  $this->dbAdmin->config['templatesPath'] . 'home.tpl';
+        return  '';
     }
 }

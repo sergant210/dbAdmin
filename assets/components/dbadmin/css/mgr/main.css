@@ -60,7 +60,18 @@ a.x-menu-item .x-menu-item-text .icon {
 	padding: 5px;
 	cursor:	default;
 }
-
+#dbadmin-grid-table-data .x-panel-body,
+#dbadmin-grid-table-data .x-panel-body .x-grid3,
+#dbadmin-grid-table-data .x-panel-body .x-grid3 .x-grid3-viewport
+{
+	overflow: visible !important;
+}
+#dbadmin-grid-table-data .x-grid3-header .x-grid3-hd-row td {
+	background-color: #e4e9ee;
+}
+.x-form-item.x-hide-label {
+	padding-top: 0 !important;
+}
 /*
 ul.dbadmin-row-actions .actions-menu {width: 40px;}
 ul.dbadmin-row-actions .actions-menu:after {content: " \f107";}

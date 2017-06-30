@@ -44,6 +44,7 @@ $_lang['dbadmin_execute_sql'] = 'Выполнить SQL запрос';
 $_lang['dbadmin_execute'] = 'Выполнить';
 $_lang['dbadmin_close'] = 'Закрыть';
 $_lang['dbadmin_clear'] = 'Очистить';
+$_lang['dbadmin_output_type'] = 'Тип вывода';
 
 $_lang['createdon'] = 'Время создания: ';
 $_lang['table_structure'] = 'Структура таблицы';

@@ -165,7 +165,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 								menuDisabled: true,
 								editable: record.class != '',
 								editor:	{xtype: 'textfield'},
-								width: 100
+								width: 150
 							}
 						});
 						for (var i = 0; i < fields.length; i++) {
@@ -176,10 +176,10 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 							switch (fields[i]['type']) {
 								case 'string':
 									colModel.columns[i].editor = {xtype: 'textarea'};
-									colModel.columns[i].width = 200;
+									colModel.columns[i].width = 300;
 									break;
 								case 'number':
-									colModel.columns[i].width = 50;
+									colModel.columns[i].width = 100;
 									break;
 								case 'actions':
 									colModel.columns[i].header = '<i class="icon icon-cog"></i>';
@@ -192,7 +192,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 									break;
 							}
 							if (fields[i]['name'] == 'id') {
-								colModel.columns[i].width = 40;
+								colModel.columns[i].width = 50;
 								colModel.columns[i].fixed = true;
 							}
 						}

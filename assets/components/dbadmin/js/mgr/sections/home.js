@@ -2,7 +2,7 @@ dbAdmin.page.Home = function (config) {
 	config = config || {};
 	Ext.applyIf(config, {
 		components: [{
-			xtype: 'dbadmin-panel-home', renderTo: 'dbadmin-panel-home-div'
+			xtype: 'dbadmin-panel-home'
 		}]
 	});
 	dbAdmin.page.Home.superclass.constructor.call(this, config);

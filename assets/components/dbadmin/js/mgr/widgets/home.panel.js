@@ -8,16 +8,20 @@ dbAdmin.panel.Home = function (config) {
 		items: [{
 			html: '<h2>' + _('dbadmin_menu_desc') + '</h2>',
 			cls: '',
-			style: {margin: '15px 0'}
+			style: {margin: '15px 10px'}
 		}, {
 			xtype: 'modx-tabs',
 			id: 'dbadmin-tabpanel',
 			defaults: {border: false, autoHeight: true},
 			border: true,
 			hideMode: 'offsets',
+			stateful: true,
+			stateId: 'dbadmin-panel-home',
+			stateEvents: ['tabchange'],
+			getState:function() {return {activeTab:this.items.indexOf(this.getActiveTab())};},
 			items: [{
 				title: _('dbadmin_tables'),
-				layout: 'form',
+				layout: 'anchor',
 				items: [{
 					html: _('dbadmin_intro_msg'),
 					id: 'dbadmin-intro-msg',
@@ -29,7 +33,7 @@ dbAdmin.panel.Home = function (config) {
 				}]
 			}, {
 				title: _('dbadmin_sql'),
-				layout: 'anchor',
+				layout: 'form',
 				//style: {height:'700px'},
 				id: 'dbadmin-sql-tab',
 				items: [{
@@ -38,84 +42,102 @@ dbAdmin.panel.Home = function (config) {
 					style: {margin: '15px', padding: '5px !important'}
 				}, {
 					xtype: Ext.ComponentMgr.types['modx-texteditor'] ? 'modx-texteditor' : 'textarea',
+					mimeType: 'text/x-sql',
 					hideLabel: true,
 					name: 'query',
-					style: {margin: '0 15px'},
+					style: {margin: '0 15px', resize: 'vertical'},
 					id: 'dbadmin-sql-query',
-					height: 100,
+					height: 180,
 					width: 'auto',
 					minHeight: 100
 				},{
-					xtype: 'button',
-					id: 'dbadmin-execute-query-btn',
-					text: _('dbadmin_execute'),
-					tooltip: 'Ctrl+Enter',
-					tooltipType: 'title',
-					style: {margin: '15px 5px 15px 15px'},
-					listeners: {
-						click: function() {
-							var panel = Ext.getCmp('dbadmin-panel'),
-								query = Ext.getCmp('dbadmin-sql-query'),
-								queryVal = query.getValue().replace(/^\s+/g, '');
-							if (!queryVal) return false;
-							panel.el.mask(_('working'));
-							MODx.Ajax.request({
-								url: dbAdmin.config.connector_url,
-								params: {
-									action: "mgr/sql/execute",
-									query: query.getValue()
-								},
-								listeners: {
-									success: {
-										fn: function (r) {
-											panel.el.unmask();
-											var val;
-											if (r.select) {
-												if (r.number == 0) {
-													val = _('dbadmin_rows_number') + "0";
-												} else {
-													val = _('dbadmin_rows_number') + r.number + "\n\n" + r.data;
-												}
-											} else {
-												val = _('dbadmin_sql_executed_success');
-											}
-
-											Ext.getCmp('dbadmin-sql-query-result').setValue(val);
-										}
+					xtype: 'toolbar',
+					style: { backgroundColor: 'transparent',borderColor: 'transparent', margin:'10px 15px 10px 12px'},
+					items: [{
+						xtype: 'button',
+						id: 'dbadmin-execute-query-btn',
+						text: _('dbadmin_execute'),
+						tooltip: 'Ctrl+Enter',
+						tooltipType: 'title',
+						//style: {margin: '10px 5px 10px 15px'},
+						listeners: {
+							click: function () {
+								var panel = Ext.getCmp('dbadmin-panel'),
+									query = Ext.getCmp('dbadmin-sql-query'),
+									queryVal = query.getValue().replace(/^\s+/g, '');
+								if (!queryVal) return false;
+								var outputType = Ext.getCmp('dbadmin-outputtype').getValue();
+								panel.el.mask(_('working'));
+								MODx.Ajax.request({
+									url: dbAdmin.config.connector_url,
+									params: {
+										action: "mgr/sql/execute",
+										outputType: outputType,
+										query: query.getValue()
 									},
-									failure: {
-										fn: function (r) {
-											panel.el.unmask();
-											MODx.msg.alert(_('error'), 'Error');
-											Ext.getCmp('dbadmin-sql-query-result').setValue(r.message);
+									listeners: {
+										success: {
+											fn: function (r) {
+												panel.el.unmask();
+												var val = outputType == 'var_export' ? "<?php\n//" : '';
+												if (r.select) {
+													if (r.number == 0) {
+														val += _('dbadmin_rows_number') + "0";
+													} else {
+														val += _('dbadmin_rows_number') + r.number + "\n\n" + r.data;
+													}
+												} else {
+													val = _('dbadmin_sql_executed_success');
+												}
+
+												Ext.getCmp('dbadmin-sql-query-result').setValue(val);
+											}
+										},
+										failure: {
+											fn: function (r) {
+												panel.el.unmask();
+												//MODx.msg.alert(_('error'), 'Error');
+												MODx.form.Handler.showError =  function(message) {
+													return false;
+												};
+												Ext.getCmp('dbadmin-sql-query-result').setValue(r.message);
+											}
 										}
 									}
-								}
-							});
+								});
+							}
 						}
-					}
-				},{
-					xtype: 'button',
-					id: 'dbadmin-clear-btn',
-					text: _('dbadmin_clear'),
-					style: {marginTop: '15px'},
-					listeners: {
-						click: function () {
-							Ext.getCmp('dbadmin-sql-query').setValue("");
-							Ext.getCmp('dbadmin-sql-query-result').setValue("");
+					},{
+						xtype: 'button',
+						id: 'dbadmin-clear-btn',
+						text: _('dbadmin_clear'),
+						// style: {marginTop: '15px'},
+						listeners: {
+							click: function () {
+								Ext.getCmp('dbadmin-sql-query').setValue("");
+								Ext.getCmp('dbadmin-sql-query-result').setValue("");
+							}
 						}
-					}
+					},'->', {
+						xtype: 'displayfield',
+						// fieldLabel: _('dbadmin_output_type'),
+						value: _('dbadmin_output_type'),
+						style: {fontSize: '13px'}
+					}, {
+						xtype: 'dbadmin-output-types',
+						fieldLabel: _('dbadmin_output_type'),
+						name: 'outputType',
+						id: 'dbadmin-outputtype',
+						value: 'var_export'
+					}]
 				},{
-					html: _('dbadmin_query_result'),
-					cls: 'panel-desc',
-					style: {margin: '0 15px'}
-				}, {
 					xtype: Ext.ComponentMgr.types['modx-texteditor'] ? 'modx-texteditor' : 'textarea',
+					mimeType: 'application/x-php',
 					hideLabel: true,
 					name: 'query_result',
-					style: {margin: '10px 15px'},
+					style: {margin: '10px 15px', resize: 'vertical'},
 					id: 'dbadmin-sql-query-result',
-					height: 300,
+					height: 360,
 					width: 'auto',
 					minHeight: 200,
 					readOnly: true

@@ -1,3 +1,10 @@
+1.1.3-pl
+==============
+- Added the horizontal scrolling for a table window.
+- Added output type - var_export or print_r.
+- Added syntax highlighting for sql.
+- Now, instead of the "query error", a full description of the error is displayed.
+
 1.1.2-pl
 ==============
 - Changed file name format of database backup to "database_date_time.sql". For example, "modx_20160317_090155.sql".
