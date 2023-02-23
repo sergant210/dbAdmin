@@ -1,14 +1,14 @@
 <?php
 /**
- * English permissions Lexicon Entries for dbAdmin
+ * Permissions Lexicon Entries for dbAdmin
  *
  * @package dbadmin
  * @subpackage lexicon
  */
-$_lang['tables_list'] = 'Allow to view a list of tables.';
-$_lang['table_view'] = 'Table view permission.';
-$_lang['table_save'] = 'Table save permission.';
-$_lang['table_truncate'] = 'Truncate permission (truncate table).';
-$_lang['table_remove'] = 'Remove permission (remove table).';
-$_lang['table_export'] = 'Allow to export a table.';
-$_lang['sql_query_execute'] = 'Allow to execute sql queries.';
+$_lang['dbadmin.permission.tables_list_desc'] = 'Allow to view a list of tables.';
+$_lang['dbadmin.permission.table_view_desc'] = 'Table view permission.';
+$_lang['dbadmin.permission.table_save_desc'] = 'Table save permission.';
+$_lang['dbadmin.permission.table_truncate_desc'] = 'Truncate permission (truncate table).';
+$_lang['dbadmin.permission.table_remove_desc'] = 'Remove permission (remove table).';
+$_lang['dbadmin.permission.table_export_desc'] = 'Allow to export a table.';
+$_lang['dbadmin.permission.sql_query_execute_desc'] = 'Allow to execute sql queries.';

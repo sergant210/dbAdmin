@@ -1,0 +1,47 @@
+{
+  "name": "dbAdmin",
+  "lowCaseName": "dbadmin",
+  "description": "Database Tables Administration for MODX Revolution",
+  "author": "Sergei Shlokov",
+  "version": "1.2.0",
+  "package": {
+    "menus": [
+      {
+        "text": "dbadmin.menu",
+        "description": "dbadmin.menu_desc",
+        "action": "home",
+        "parent": "components"
+      }
+    ]
+  },
+  "database": {
+    "tables": [
+      "dbAdminTable"
+    ]
+  },
+  "dependencies": [
+    {
+      "name": "php",
+      "version": ">=7.4"
+    },
+    {
+      "name": "modx",
+      "version": ">=2.8"
+    }
+  ],
+  "build": {
+    "readme": "docs/readme.md",
+    "license": "docs/license.md",
+    "changelog": "docs/changelog.md",
+    "setupOptions": {
+      "source": "setup.options.php"
+    },
+    "resolver": {
+      "after": [
+        "resolve.synctables.php",
+        "resolve.tables_values.php",
+        "resolve.permissions.php"
+      ]
+    }
+  }
+}

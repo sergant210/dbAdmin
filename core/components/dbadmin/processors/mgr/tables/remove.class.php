@@ -4,7 +4,7 @@
  * Remove selected tables
  */
 class dbAdminTableMultiRemoveProcessor extends modProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
     public $classKey = 'dbAdminTable';
 	public $languageTopics = array('dbadmin');
 	public $permission = 'table_remove';
@@ -16,7 +16,7 @@ class dbAdminTableMultiRemoveProcessor extends modProcessor {
 	public function process() {
         $tables = $this->getProperty('tables','');
         if (empty($tables)) {
-            return $this->failure($this->modx->lexicon('dbadmin_table_err_ns'));
+            return $this->failure($this->modx->lexicon('dbadmin.table_err_ns'));
         }
         $processorProps = array('processors_path' => dirname(dirname(__FILE__)).'/table/');
         foreach (explode(',',$tables) as $name) {

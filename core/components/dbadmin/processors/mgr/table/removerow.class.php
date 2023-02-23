@@ -4,7 +4,7 @@
  * Remove a record from the table
  */
 class dbAdminRemoveTableRowProcessor extends modObjectRemoveProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
     public $classKey = '';
     public $primaryKeyFields = '';
 	public $permission = 'table_save';
@@ -15,13 +15,13 @@ class dbAdminRemoveTableRowProcessor extends modObjectRemoveProcessor {
      */
     public function initialize() {
         $data = $this->getProperty('data');
-        if (empty($data)) return $this->modx->lexicon('dbadmin_invalid_data');
+        if (empty($data)) return $this->modx->lexicon('dbadmin.invalid_data');
         $properties = $this->modx->fromJSON($data);
         $this->setProperties($properties);
         $this->unsetProperty('data');
         $this->classKey = trim($this->getProperty('class'));
         $package = strtolower(trim($this->getProperty('package','')));
-        if (empty($this->classKey) || empty($package)) return $this->modx->lexicon('dbadmin_invalid_data');
+        if (empty($this->classKey) || empty($package)) return $this->modx->lexicon('dbadmin.invalid_data');
 
         $path = MODX_CORE_PATH.'components/'.$package.'/model/';
 
@@ -29,7 +29,7 @@ class dbAdminRemoveTableRowProcessor extends modObjectRemoveProcessor {
             if (is_dir($path)) {
                 if (!$this->modx->addPackage($package, MODX_CORE_PATH . 'components/' . $package . '/model/')) {
                     $this->classKey = '';
-                    $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('dbadmin_err_path'));
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('dbadmin.err_path'));
                 }
             } else {
                 $this->classKey = '';

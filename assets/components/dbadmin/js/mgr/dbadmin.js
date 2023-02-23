@@ -1,10 +1,10 @@
-var dbAdmin = function (config) {
+var dbadmin = function (config) {
 	config = config || {};
-	dbAdmin.superclass.constructor.call(this, config);
+	dbadmin.superclass.constructor.call(this, config);
 };
-Ext.extend(dbAdmin, Ext.Component, {
+Ext.extend(dbadmin, Ext.Component, {
 	page: {}, window: {}, grid: {}, tree: {}, panel: {}, combo: {}, config: {}, view: {}, utils: {}
 });
-Ext.reg('dbadmin', dbAdmin);
+Ext.reg('dbadmin', dbadmin);
 
-dbAdmin = new dbAdmin();
+var dbAdmin = new dbadmin();

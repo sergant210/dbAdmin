@@ -20,13 +20,13 @@ class dbAdminExportTablesProcessor extends modObjectProcessor {
             sort($tables);
             $fileName = 'custom_'.date('Ymd_His').'.sql';
         } else {
-            return $this->failure($this->modx->lexicon('dbadmin_table_err_ns'));
+            return $this->failure($this->modx->lexicon('dbadmin.table_err_ns'));
         }
-        $path = $this->modx->getOption('dbadmin_assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/').'export/';
+        $path = $this->modx->getOption('dbadmin.assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/').'export/';
         if (!is_dir($path) && !mkdir($path, 0755)) {
-            return $this->failure($this->modx->lexicon('dbadmin_table_err_path'));
+            return $this->failure($this->modx->lexicon('dbadmin.table_err_path'));
         }
-        $sql = "-- ".$this->modx->lexicon('createdon').date('j M Y, H:i')."\n\n";
+        $sql = "-- ".$this->modx->lexicon('dbadmin.createdon').date('j M Y, H:i')."\n\n";
         foreach ($tables as $table) {
             $sql .= $this->prepareTableCreateSql($table);
             $sql .= $this->getTableData($table);
@@ -60,7 +60,7 @@ class dbAdminExportTablesProcessor extends modObjectProcessor {
      * @return string
      */
     protected function prepareTableCreateSql($table){
-        $sql = "--\n-- ".$this->modx->lexicon('table_structure')." `{$table}`\n--\n\n";
+        $sql = "--\n-- ".$this->modx->lexicon('dbadmin.table_structure')." `{$table}`\n--\n\n";
         $result = $this->modx->query('SHOW CREATE TABLE '.$table);
         if (is_object($result)) {
             $tables = $result->fetch(PDO::FETCH_ASSOC);
@@ -92,7 +92,7 @@ class dbAdminExportTablesProcessor extends modObjectProcessor {
         if (!is_object($result) || !$rows = $result->fetchAll(PDO::FETCH_NUM)) return '';
         $num_rows = count($rows);
         $num_cols = count($rows[0]);
-        $sql = "\n--\n-- ".$this->modx->lexicon('table_dump')." `{$table}`\n--\n\n";
+        $sql = "\n--\n-- ".$this->modx->lexicon('dbadmin.table_dump')." `{$table}`\n--\n\n";
 
         $sql .= 'INSERT INTO `'. $table ."` (".$_fieldList;
         // Формируем данные для вывода

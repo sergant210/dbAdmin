@@ -4,10 +4,10 @@ dbAdmin.window.UpdateTable = function (config) {
 		config.id = 'dbadmin-table-window-update';
 	}
 	Ext.applyIf(config, {
-		title: _('dbadmin_table_properties'),
+		title: _('dbadmin.table_properties'),
 		width: 400,
-		autoHeight: false,
-		url: dbAdmin.config.connector_url,
+		autoHeight: true,
+		url: dbAdmin.config.connectorUrl,
 		action: 'mgr/tables/update',
 		resizable: false,
 		maximizable: false,
@@ -21,11 +21,10 @@ dbAdmin.window.UpdateTable = function (config) {
 	dbAdmin.window.UpdateTable.superclass.constructor.call(this, config);
 };
 Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
-
 	getFields: function (config) {
 		return [{
 			xtype: 'textfield',
-			fieldLabel: _('dbadmin_table'),
+			fieldLabel: _('dbadmin.table'),
 			name: 'name',
 			id: config.id + 'dbadmin-table-name',
 			anchor: '100%',
@@ -35,14 +34,13 @@ Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
 			name: 'oldName'
 		}, {
 			xtype: 'textfield',
-			fieldLabel: _('dbadmin_package'),
+			fieldLabel: _('dbadmin.package'),
 			name: 'package',
 			id: config.id + 'dbadmin-table-package',
 			anchor: '100%'
 		}, {
 			layout: 'column'
 			,border: false
-			,style: {marginTop:'10px'}
 			,anchor: '100%'
 			,items: [{
 				columnWidth: .85
@@ -51,7 +49,7 @@ Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
 				,border:false
 				,items: [{
 					xtype: 'textfield',
-					fieldLabel: _('dbadmin_class'),
+					fieldLabel: _('dbadmin.class'),
 					name: 'class',
 					id: config.id + 'dbadmin-table-class',
 					anchor: '100%'
@@ -65,10 +63,9 @@ Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
 				,items: [{
 					xtype: 'button',
 					text: '<i class="icon icon-magic"></i>',
-					tooltip: _('dbadmin_table_set_class'),
+					tooltip: _('dbadmin.table_set_class'),
 					id: config.id + '-getclass-button',
 					cls: 'get-class-button',
-					style: {marginTop: '18px',padding:'7px 15px'},
 					scope: this,
 					anchor: '100%',
 					handler: function(){this.getClass(this.config);}
@@ -80,7 +77,7 @@ Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
 		var name = Ext.getCmp(config.id + 'dbadmin-table-name').getValue('name'),
 			pkg = Ext.getCmp(config.id + 'dbadmin-table-package').getValue('package');
 		MODx.Ajax.request({
-			url: dbAdmin.config.connector_url,
+			url: dbAdmin.config.connectorUrl,
 			params: {
 				action: 'mgr/tables/setclass',
 				name: name,
@@ -99,6 +96,5 @@ Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
 			}
 		});
 	},
-
 });
 Ext.reg('dbadmin-table-window-update', dbAdmin.window.UpdateTable);

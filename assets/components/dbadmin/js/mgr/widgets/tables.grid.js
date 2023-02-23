@@ -5,63 +5,60 @@ dbAdmin.grid.Tables = function (config) {
 	}
 	this.sm = new Ext.grid.CheckboxSelectionModel();
 	Ext.applyIf(config, {
-		url: dbAdmin.config.connector_url,
+		url: dbAdmin.config.connectorUrl,
 		primaryKey: 'name',
 		sm: this.sm,
 		fields: ['name', 'class', 'package', 'type', 'rows', 'collation', 'size' , 'actions'],
 		columns: [this.sm,{
-			header: _('dbadmin_table'),
+			header: _('dbadmin.table'),
 			dataIndex: 'name',
 			sortable: true,
 			editable: true,
-			//editor:	{xtype: 'textfield'},
 			width: 300
 		}, {
-			header: _('dbadmin_class'),
+			header: _('dbadmin.class'),
 			dataIndex: 'class',
 			sortable: true,
 			width: 150
 		}, {
-			header: _('dbadmin_package'),
+			header: _('dbadmin.package'),
 			dataIndex: 'package',
 			sortable: false,
 			hidden: true,
 			width: 100
 		}, {
-			header: _('dbadmin_table_type'),
+			header: _('dbadmin.table_type'),
 			dataIndex: 'type',
 			sortable: false,
 			fixed: true,
 			width: 100
 		}, {
-			header: _('dbadmin_table_collation'),
+			header: _('dbadmin.table_collation'),
 			dataIndex: 'collation',
 			sortable: false,
 			width: 100
 		}, {
-			header: _('dbadmin_table_rows'),
+			header: _('dbadmin.table_rows'),
 			dataIndex: 'rows',
 			sortable: false,
 			menuDisabled: true,
 			fixed: true,
 			width: 70
 		}, {
-			header: _('dbadmin_table_size'),
+			header: _('dbadmin.table_size'),
 			dataIndex: 'size',
 			sortable: false,
 			menuDisabled: true,
 			fixed: true,
 			width: 90
 		}, {
-			header: _('dbadmin_table_actions'),
+			header: _('dbadmin.table_actions'),
 			dataIndex: 'actions',
 			renderer: dbAdmin.utils.renderActions,
 			sortable: false,
-			width: 170,
-			fixed: true,
-			id: 'actions'
+			width: 110,
+			fixed: true
 		}],
-		//autosave: true,
 		tbar: this.getTopBar(config),
 		baseParams: {
 			action: 'mgr/tables/getlist'
@@ -74,16 +71,16 @@ dbAdmin.grid.Tables = function (config) {
 			}
 		},
 		viewConfig: {
-			forceFit: true,
-			enableRowBody: true,
 			autoFill: true,
-			showPreview: true,
+			enableRowBody: true,
+			forceFit: true,
 			scrollOffset: 0
 		},
 		paging: true,
 		pageSize: 25,
 		remoteSort: true,
-		autoHeight: true
+		autoHeight: true,
+		showActionsColumn: false
 	});
 	dbAdmin.grid.Tables.superclass.constructor.call(this, config);
 
@@ -91,7 +88,7 @@ dbAdmin.grid.Tables = function (config) {
 		this.on('afteredit',this.saveRecord,this);
 	}
 	// Clear selection on grid refresh
-	this.store.on('load', function (o) {
+	this.store.on('load', function () {
 		if (this._getSelectedIds().length) {
 			this.getSelectionModel().clearSelections();
 		}
@@ -108,13 +105,13 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 
 		this.addContextMenuItem(menu);
 	},
-	exportSelected: function (b,o) {
+	exportSelected: function (b) {
 		var export_db, tables = '';
-		if (b.id == 'dbadmin-db-export') {
-			// export the entire database
+		if (b.id === 'dbadmin-db-export') {
+			// Export the entire database
 			export_db = true;
 		} else {
-			// export selected tables
+			// Export selected tables
 			export_db = false;
 			tables = this.getSelectedAsList();
 			if (tables === false) return false;
@@ -122,7 +119,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		var panel = Ext.getCmp('dbadmin-panel');
 		panel.el.mask(_('working'));
 		MODx.Ajax.request({
-			url: dbAdmin.config.connector_url,
+			url: dbAdmin.config.connectorUrl,
 			params: {
 				action: 'mgr/tables/export',
 				tables: tables,
@@ -132,7 +129,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 				success: {
 					fn: function (r) {
 						panel.el.unmask();
-						location.href = this.url+"?action=mgr/tables/download&name="+ r.object.name+"&HTTP_MODAUTH="+MODx.siteId;
+						location.href = dbAdmin.config.connectorUrl + "?action=mgr/tables/download&name=" + r.object.name + "&HTTP_MODAUTH=" + MODx.siteId;
 					}, scope: this
 				},
 				failure: {
@@ -149,7 +146,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			? row.data
 			: this.menu.record;
 		MODx.Ajax.request({
-			url: dbAdmin.config.connector_url,
+			url: dbAdmin.config.connectorUrl,
 			params: {
 				action: 'mgr/table/getfields',
 				table: record.name
@@ -163,7 +160,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 							defaults: {
 								sortable: true,
 								menuDisabled: true,
-								editable: record.class != '',
+								editable: record.class !== '',
 								editor:	{xtype: 'textfield'},
 								width: 150
 							}
@@ -183,7 +180,6 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 									break;
 								case 'actions':
 									colModel.columns[i].header = '<i class="icon icon-cog"></i>';
-									colModel.columns[i].id = 'actions';
 									colModel.columns[i].sortable = false;
 									colModel.columns[i].width = 50;
 									colModel.columns[i].renderer = dbAdmin.utils.renderActions;
@@ -191,7 +187,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 									colModel.columns[i].editable = false;
 									break;
 							}
-							if (fields[i]['name'] == 'id') {
+							if (fields[i]['name'] === 'id') {
 								colModel.columns[i].width = 50;
 								colModel.columns[i].fixed = true;
 							}
@@ -229,7 +225,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		if (!this.updateWindow) {
 			this.updateWindow = MODx.load({
 				xtype: 'dbadmin-table-window-update',
-				//id: Ext.id(),
+				cls: 'modx' + dbAdmin.config.modxversion,
 				listeners: {
 					success: {
 						fn: function () {
@@ -252,7 +248,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			return false;
 		}
 		MODx.Ajax.request({
-			url: dbAdmin.config.connector_url,
+			url: dbAdmin.config.connectorUrl,
 			params: {
 				action: 'mgr/table/getfields',
 				table: row.data.name,
@@ -263,7 +259,6 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 					fn: function (r) {
 						var fields = r.fields || '*',
 							query = 'SELECT ' + fields + ' FROM `' + row.data.name+'`';
-						//Ext.getCmp('dbadmin-sql-query').setValue('');
 						Ext.getCmp('dbadmin-sql-query').setValue(query);
 						Ext.getCmp('dbadmin-tabpanel').setActiveTab('dbadmin-sql-tab');
 
@@ -286,8 +281,8 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		}
 		var name = row.data.name;
 		MODx.msg.confirm({
-			title: _('dbadmin_table_remove'),
-			text: _('dbadmin_table_remove_confirm'),
+			title: _('dbadmin.table_remove'),
+			text: _('dbadmin.table_remove_confirm'),
 			url: this.config.url,
 			params: {
 				action: 'mgr/table/remove',
@@ -295,7 +290,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			},
 			listeners: {
 				success: {
-					fn: function (r) {
+					fn: function () {
 						this.refresh();
 					}, scope: this
 				}
@@ -308,11 +303,11 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		if (tables === false) return false;
 		MODx.msg.confirm({
 			title: tables.split(',').length > 1
-				? _('dbadmin_tables_remove')
-				: _('dbadmin_table_remove'),
+				? _('dbadmin.tables_remove')
+				: _('dbadmin.table_remove'),
 			text: tables.split(',').length > 1
-				? _('dbadmin_tables_remove_confirm')
-				: _('dbadmin_table_remove_confirm'),
+				? _('dbadmin.tables_remove_confirm')
+				: _('dbadmin.table_remove_confirm'),
 			url: this.config.url,
 			params: {
 				action: 'mgr/tables/remove',
@@ -320,7 +315,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			},
 			listeners: {
 				success: {
-					fn: function (r) {
+					fn: function () {
 						this.refresh();
 					}, scope: this
 				}
@@ -333,11 +328,11 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 		if (tables === false) return false;
 		MODx.msg.confirm({
 			title: tables.split(',').length > 1
-				? _('dbadmin_tables_truncate')
-				: _('dbadmin_table_truncate'),
+				? _('dbadmin.tables_truncate')
+				: _('dbadmin.table_truncate'),
 			text: tables.split(',').length > 1
-				? _('dbadmin_tables_truncate_confirm')
-				: _('dbadmin_table_truncate_confirm'),
+				? _('dbadmin.tables_truncate_confirm')
+				: _('dbadmin.table_truncate_confirm'),
 			url: this.config.url,
 			params: {
 				action: 'mgr/tables/truncate',
@@ -345,7 +340,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			},
 			listeners: {
 				success: {
-					fn: function (r) {
+					fn: function () {
 						this.refresh();
 					}, scope: this
 				}
@@ -355,25 +350,25 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 	},
 	getTopBar: function (config) {
 		return [{
-			text: _('dbadmin_db_export'),
+			text: _('dbadmin.db_export'),
 			id: 'dbadmin-db-export',
 			handler: this.exportSelected,
 			scope: this
 		}, {
 			text: _('bulk_actions'),
 			menu: [{
-				text: '<i class="icon icon-download"></i> ' + _('dbadmin_selected_export'),
+				text: '<i class="icon icon-download"></i> ' + _('dbadmin.selected_export'),
 				id: 'dbadmin-menu-selected-export',
 				handler: this.exportSelected,
 				style: {padding: '3px 10px !important;'},
 				scope: this
 			}, {
-				text: '<i class="icon icon-eraser"></i> ' + _('dbadmin_selected_truncate'),
+				text: '<i class="icon icon-eraser"></i> ' + _('dbadmin.selected_truncate'),
 				id: 'dbadmin-menu-selected-truncate',
 				handler: this.truncateSelected,
 				scope: this
 			}, {
-				text: '<i class="icon icon-trash-o"></i> ' + _('dbadmin_selected_remove'),
+				text: '<i class="icon icon-trash-o"></i> ' + _('dbadmin.selected_remove'),
 				id: 'dbadmin-menu-selected-remove',
 				handler: this.removeSelected,
 				scope: this
@@ -383,7 +378,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 			name: 'query',
 			width: 200,
 			id: config.id + '-search-field',
-			emptyText: _('dbadmin_grid_search'),
+			emptyText: _('dbadmin.grid_search'),
 			listeners: {
 				render: {
 					fn: function (tf) {
@@ -404,11 +399,11 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 	},
 	onClick: function (e) {
 		var elem = e.getTarget();
-		if (elem.nodeName == 'BUTTON') {
+		if (elem.nodeName === 'SPAN') {
 			var row = this.getSelectionModel().getSelected();
 			if (typeof(row) != 'undefined') {
-				var action = elem.getAttribute('action');
-				if (action == 'showMenu') {
+				var action = elem.dataset.action;
+				if (action === 'showMenu') {
 					var ri = this.getStore().find('id', row.id);
 					return this._showMenu(this, ri, e);
 				}
@@ -433,14 +428,14 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
 
 		return ids;
 	},
-	search: function (tf, nv, ov) {
+	search: function (tf) {
 		this.getStore().baseParams.query = tf.getValue();
 		this.getBottomToolbar().changePage(1);
 		this.refresh();
 		return true;
 	},
 
-	clearSearch: function (btn, e) {
+	clearSearch: function () {
 		this.getStore().baseParams.query = '';
 		Ext.getCmp(this.config.id + '-search-field').setValue('');
 		this.getBottomToolbar().changePage(1);

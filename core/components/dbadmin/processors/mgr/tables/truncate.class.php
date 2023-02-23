@@ -4,7 +4,7 @@
  * Truncate selected tables
  */
 class dbAdminTablesTruncateProcessor extends modObjectProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
 	public $languageTopics = array('dbadmin');
 	public $permission = 'table_truncate';
 
@@ -15,7 +15,7 @@ class dbAdminTablesTruncateProcessor extends modObjectProcessor {
 	public function process() {
         $tables = $this->getProperty('tables','');
         if (empty($tables)) {
-            return $this->failure($this->modx->lexicon('dbadmin_table_err_ns'));
+            return $this->failure($this->modx->lexicon('dbadmin.table_err_ns'));
         }
 		foreach (explode(',',$tables) as $table) {
             try {

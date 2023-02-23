@@ -4,7 +4,7 @@
  * Update a Table
  */
 class dbAdminTableUpdateProcessor extends modObjectProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
     public $classKey = 'dbAdminTable';
     public $primaryKeyField = 'name';
     public $languageTopics = array('dbadmin');
@@ -21,13 +21,13 @@ class dbAdminTableUpdateProcessor extends modObjectProcessor {
         $newName = trim($this->getProperty('name'));
         $oldName = trim($this->getProperty('oldName'));
         if (empty($oldName) || empty($newName)) {
-            return $this->failure($this->modx->lexicon('dbadmin_table_err_ns'));
+            return $this->failure($this->modx->lexicon('dbadmin.table_err_ns'));
         } elseif ($newName==$oldName) {
             $rename = false;
         }
 
         if ($rename) {
-            if ($this->modx->getCount($this->classKey,$newName)) return $this->failure($this->modx->lexicon('dbadmin_table_err_ae'));
+            if ($this->modx->getCount($this->classKey,$newName)) return $this->failure($this->modx->lexicon('dbadmin.table_err_ae'));
             //1. Rename the table
             $query = $this->modx->newQuery($this->classKey);
             $query->command('update');
@@ -40,7 +40,7 @@ class dbAdminTableUpdateProcessor extends modObjectProcessor {
                 'name'    => $oldName,
             ));
             $query->prepare();
-            if (!$query->stmt->execute()) return $this->failure($this->modx->lexicon('dbadmin_table_err_save'));
+            if (!$query->stmt->execute()) return $this->failure($this->modx->lexicon('dbadmin.table_err_save'));
             unset($query);
             //2. Rename the system table
             try {
@@ -49,7 +49,7 @@ class dbAdminTableUpdateProcessor extends modObjectProcessor {
                 $query = "RENAME TABLE {$oldName} TO {$newName}";
                 if ($stmt = $this->modx->prepare($query)) {
                     if (!$stmt->execute()) {
-                        throw new PDOException($this->modx->lexicon('dbadmin_table_err_rename'));
+                        throw new PDOException($this->modx->lexicon('dbadmin.table_err_rename'));
                     }
                 }
             } catch (PDOException $e) {
@@ -66,7 +66,7 @@ class dbAdminTableUpdateProcessor extends modObjectProcessor {
                 'name'    => $oldName,
             ));
             $query->prepare();
-            if (!$query->stmt->execute()) return $this->failure($this->modx->lexicon('dbadmin_table_err_save'));
+            if (!$query->stmt->execute()) return $this->failure($this->modx->lexicon('dbadmin.table_err_save'));
 
         }
 

@@ -4,7 +4,7 @@
  * Get a table data
  */
 class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
     public $classKey = '';
     public $defaultSortField = '';
     public $defaultSortDirection = 'ASC';
@@ -40,14 +40,14 @@ class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
         $limit = intval($this->getProperty('limit'));
         $start = intval($this->getProperty('start'));
         $package = strtolower($this->getProperty('package',''));
-        $path = MODX_CORE_PATH.'components/'.$package.'/model/';
+        $path = $this->modx->getOption("{$package}.core_path", null, $this->modx->getOption('core_path') . "components/{$package}/"). 'model/';
         $foundClass = true;
         if (empty($this->classKey)) {
             $foundClass = false;
         }
         if (!preg_match('/^modx/',$package)) {
             if (is_dir($path)) {
-                if (!$this->modx->addPackage($package, MODX_CORE_PATH . 'components/' . $package . '/model/')) {
+                if (!$this->modx->addPackage($package, $path)) {
                     $foundClass = false;
                 }
             } else {
@@ -98,7 +98,7 @@ class dbAdminTableDataGetListProcessor extends modObjectGetListProcessor {
                 $row['actions'][] = array(
                     'cls' => '',
                     'icon' => 'icon icon-trash-o action-red',
-                    'title' => $this->modx->lexicon('dbadmin_row_remove'),
+                    'title' => $this->modx->lexicon('dbadmin.row_remove'),
                     'action' => 'removeRow',
                     'button' => true,
                     'menu' => true,

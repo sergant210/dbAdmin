@@ -1,14 +1,16 @@
 dbAdmin.panel.Home = function (config) {
 	config = config || {};
 	Ext.apply(config, {
-		baseCls: 'modx-formpanel',
-		layout: 'anchor',
+		cls: 'container home-panel' + ' modx' + dbAdmin.config.modxversion,
 		id: 'dbadmin-panel',
-		hideMode: 'offsets',
+		defaults: {
+			collapsible: false,
+			autoHeight: true
+		},
 		items: [{
-			html: '<h2>' + _('dbadmin_menu_desc') + '</h2>',
-			cls: '',
-			style: {margin: '15px 10px'}
+			html: '<h2>' + _('dbadmin.menu') + '</h2>',
+			border: false,
+			cls: 'modx-page-header'
 		}, {
 			xtype: 'modx-tabs',
 			id: 'dbadmin-tabpanel',
@@ -20,10 +22,10 @@ dbAdmin.panel.Home = function (config) {
 			stateEvents: ['tabchange'],
 			getState:function() {return {activeTab:this.items.indexOf(this.getActiveTab())};},
 			items: [{
-				title: _('dbadmin_tables'),
+				title: _('dbadmin.tables'),
 				layout: 'anchor',
 				items: [{
-					html: _('dbadmin_intro_msg'),
+					html: _('dbadmin.intro_msg'),
 					id: 'dbadmin-intro-msg',
 					cls: 'panel-desc',
 					style: {margin: '15px 15px 0'}
@@ -32,12 +34,11 @@ dbAdmin.panel.Home = function (config) {
 					cls: 'main-wrapper'
 				}]
 			}, {
-				title: _('dbadmin_sql'),
+				title: _('dbadmin.sql'),
 				layout: 'form',
-				//style: {height:'700px'},
 				id: 'dbadmin-sql-tab',
 				items: [{
-					html: _('dbadmin_enter_sql_query'),
+					html: _('dbadmin.enter_sql_query'),
 					cls: 'panel-desc',
 					style: {margin: '15px', padding: '5px !important'}
 				}, {
@@ -56,10 +57,9 @@ dbAdmin.panel.Home = function (config) {
 					items: [{
 						xtype: 'button',
 						id: 'dbadmin-execute-query-btn',
-						text: _('dbadmin_execute'),
+						text: _('dbadmin.execute'),
 						tooltip: 'Ctrl+Enter',
 						tooltipType: 'title',
-						//style: {margin: '10px 5px 10px 15px'},
 						listeners: {
 							click: function () {
 								var panel = Ext.getCmp('dbadmin-panel'),
@@ -69,7 +69,7 @@ dbAdmin.panel.Home = function (config) {
 								var outputType = Ext.getCmp('dbadmin-outputtype').getValue();
 								panel.el.mask(_('working'));
 								MODx.Ajax.request({
-									url: dbAdmin.config.connector_url,
+									url: dbAdmin.config.connectorUrl,
 									params: {
 										action: "mgr/sql/execute",
 										outputType: outputType,
@@ -79,15 +79,15 @@ dbAdmin.panel.Home = function (config) {
 										success: {
 											fn: function (r) {
 												panel.el.unmask();
-												var val = outputType == 'var_export' ? "<?php\n//" : '';
+												var val = outputType === 'var_export' ? "<?php\n//" : '';
 												if (r.select) {
-													if (r.number == 0) {
-														val += _('dbadmin_rows_number') + "0";
+													if (r.number === 0) {
+														val += _('dbadmin.rows_number') + "0";
 													} else {
-														val += _('dbadmin_rows_number') + r.number + "\n\n" + r.data;
+														val += _('dbadmin.rows_number') + r.number + "\n\n" + r.data;
 													}
 												} else {
-													val = _('dbadmin_sql_executed_success');
+													val = _('dbadmin.sql_executed_success');
 												}
 
 												Ext.getCmp('dbadmin-sql-query-result').setValue(val);
@@ -96,8 +96,7 @@ dbAdmin.panel.Home = function (config) {
 										failure: {
 											fn: function (r) {
 												panel.el.unmask();
-												//MODx.msg.alert(_('error'), 'Error');
-												MODx.form.Handler.showError =  function(message) {
+												MODx.form.Handler.showError =  function() {
 													return false;
 												};
 												Ext.getCmp('dbadmin-sql-query-result').setValue(r.message);
@@ -110,8 +109,7 @@ dbAdmin.panel.Home = function (config) {
 					},{
 						xtype: 'button',
 						id: 'dbadmin-clear-btn',
-						text: _('dbadmin_clear'),
-						// style: {marginTop: '15px'},
+						text: _('dbadmin.clear'),
 						listeners: {
 							click: function () {
 								Ext.getCmp('dbadmin-sql-query').setValue("");
@@ -120,12 +118,11 @@ dbAdmin.panel.Home = function (config) {
 						}
 					},'->', {
 						xtype: 'displayfield',
-						// fieldLabel: _('dbadmin_output_type'),
-						value: _('dbadmin_output_type'),
+						value: _('dbadmin.output_type'),
 						style: {fontSize: '13px'}
 					}, {
 						xtype: 'dbadmin-output-types',
-						fieldLabel: _('dbadmin_output_type'),
+						fieldLabel: _('dbadmin.output_type'),
 						name: 'outputType',
 						id: 'dbadmin-outputtype',
 						value: 'var_export'
@@ -153,17 +150,17 @@ dbAdmin.panel.Home = function (config) {
 			}
 		}],
 		listeners: {
-			render: function (p) {
+			render: function () {
 				var msg = Ext.getCmp('dbadmin-intro-msg').html;
 				MODx.Ajax.request({
-					url: dbAdmin.config.connector_url,
+					url: dbAdmin.config.connectorUrl,
 					params: {
 						action: 'mgr/package/checkupdate'
 					},
 					listeners: {
 						success: {
-							fn: function (r) {
-								msg +=  _('dbadmin_package_update');
+							fn: function () {
+								msg +=  _('dbadmin.package_update');
 								Ext.getCmp('dbadmin-intro-msg').update(msg);
 							}, scope: this
 						}

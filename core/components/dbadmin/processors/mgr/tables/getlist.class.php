@@ -4,14 +4,13 @@
  * Get a list of Tables
  */
 class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
     public $classKey = 'dbAdminTable';
     public $defaultSortField = 'name';
     public $defaultSortDirection = 'ASC';
     public $permission = 'tables_list';
     public $tables = array();
     public $total = 0;
-
 
     /**
      * * We doing special check of permission
@@ -27,7 +26,6 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         return true;
     }
 
-
     /**
      * @param xPDOQuery $c
      *
@@ -42,7 +40,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
             ));
         }
         /** @var dbAdmin $dbAdmin */
-        $dbAdmin = $this->modx->getService('dbadmin', 'dbAdmin', $this->modx->getOption('dbadmin_core_path', null, $this->modx->getOption('core_path') . 'components/dbadmin/') . 'model/dbadmin/');
+        $dbAdmin = $this->modx->getService('dbadmin', 'dbAdmin', $this->modx->getOption('dbadmin.core_path', null, $this->modx->getOption('core_path') . 'components/dbadmin/') . 'model/dbadmin/');
         if ($dbAdmin->checkNeedUpdate()) $dbAdmin->synchronize();
         $this->tables = $dbAdmin->getTablesStatus();
         return $c;
@@ -64,7 +62,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         $row['actions'][] = array(
             'cls' => '',
             'icon' => 'icon icon-table',
-            'title' => $this->modx->lexicon('dbadmin_table_view'),
+            'title' => $this->modx->lexicon('dbadmin.table_view'),
             'action' => 'viewTable',
             'button' => false,
             'menu' => true,
@@ -73,7 +71,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         $row['actions'][] = array(
             'cls' => '',
             'icon' => 'icon icon-pencil-square-o',
-            'title' => $this->modx->lexicon('dbadmin_table_properties'),
+            'title' => $this->modx->lexicon('dbadmin.table_properties'),
             'action' => 'updateTable',
             'button' => true,
             'menu' => true,
@@ -82,8 +80,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         $row['actions'][] = array(
             'cls' => '',
             'icon' => 'icon icon-download',
-            'title' => $this->modx->lexicon('dbadmin_table_export'),
-            //'multiple' => $this->modx->lexicon('dbadmin_tables_export'),
+            'title' => $this->modx->lexicon('dbadmin.table_export'),
             'action' => 'exportSelected',
             'button' => true,
             'menu' => true,
@@ -92,8 +89,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         $row['actions'][] = array(
             'cls' => '',
             'icon' => 'icon icon-eraser',
-            'title' => $this->modx->lexicon('dbadmin_table_truncate'),
-            //'multiple' => $this->modx->lexicon('dbadmin_tables_truncate'),
+            'title' => $this->modx->lexicon('dbadmin.table_truncate'),
             'action' => 'truncateSelected',
             'button' => true,
             'menu' => true,
@@ -111,8 +107,7 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
         $row['actions'][] = array(
             'cls' => '',
             'icon' => 'icon icon-trash-o action-red',
-            'title' => $this->modx->lexicon('dbadmin_table_remove'),
-            //'multiple' => $this->modx->lexicon('dbadmin_tables_remove'),
+            'title' => $this->modx->lexicon('dbadmin.table_remove'),
             'action' => 'removeTable',
             'button' => true,
             'menu' => true,

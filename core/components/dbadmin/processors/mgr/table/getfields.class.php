@@ -12,10 +12,10 @@ class dbAdminTableFieldsGetProcessor extends modObjectProcessor {
     public function process() {
         $table = $this->getProperty('table','');
         $forSelect = $this->getProperty('forselect',false);
-        if (empty($table)) return $this->failure($this->modx->lexicon('dbadmin_table_err_nf'));
+        if (empty($table)) return $this->failure($this->modx->lexicon('dbadmin.table_err_nf'));
         $query = "SHOW COLUMNS FROM ".$table;
         $result = $this->modx->query($query);
-        if (!is_object($result)) return $this->failure($this->modx->lexicon('dbadmin_sql_executed_failed'));
+        if (!is_object($result)) return $this->failure($this->modx->lexicon('dbadmin.sql_executed_failed'));
         $data = $result->fetchAll(PDO::FETCH_ASSOC);
         if ($forSelect) {
             $fields = '';

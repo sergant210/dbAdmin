@@ -1,3 +1,8 @@
+1.2.0-pl
+==============
+- Compatibility with MODX 3
+- Use <package>.core_path setting to get the table class name
+
 1.1.3-pl
 ==============
 - Added the horizontal scrolling for a table window.

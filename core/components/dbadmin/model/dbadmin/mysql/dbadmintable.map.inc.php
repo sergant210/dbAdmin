@@ -1,14 +1,21 @@
 <?php
+/**
+ * @package dbadmin
+ */
 $xpdo_meta_map['dbAdminTable']= array (
   'package' => 'dbadmin',
   'version' => '1.1',
   'table' => 'dbadmin_tables_map',
   'extends' => 'xPDOObject',
+  'tableMeta' => 
+  array (
+    'engine' => 'InnoDB',
+  ),
   'fields' => 
   array (
     'name' => '',
-    'class' => '',
-    'package' => '',
+    'class' => NULL,
+    'package' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -19,7 +26,6 @@ $xpdo_meta_map['dbAdminTable']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => '',
-      'index' => 'pk',
     ),
     'class' => 
     array (
@@ -27,8 +33,6 @@ $xpdo_meta_map['dbAdminTable']= array (
       'precision' => '100',
       'phptype' => 'string',
       'null' => true,
-      'default' => '',
-      'index' => 'index',
     ),
     'package' => 
     array (
@@ -36,7 +40,6 @@ $xpdo_meta_map['dbAdminTable']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => true,
-      'default' => '',
     ),
   ),
   'indexes' => 

@@ -4,7 +4,7 @@
  * Remove a table
  */
 class dbAdminTableRemoveProcessor extends modObjectRemoveProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
     public $classKey = 'dbAdminTable';
 	public $languageTopics = array('dbadmin');
     public $primaryKeyField = 'name';

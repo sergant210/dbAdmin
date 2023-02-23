@@ -4,7 +4,7 @@
  * Set the class name for a table
  */
 class dbAdminSetClassProcessor extends modObjectUpdateProcessor {
-    public $objectType = 'dbadmin_table';
+    public $objectType = 'dbadmin.table';
     public $classKey = 'dbAdminTable';
     public $primaryKeyField = 'name';
     public $languageTopics = array('dbadmin');
@@ -20,16 +20,17 @@ class dbAdminSetClassProcessor extends modObjectUpdateProcessor {
             $name = str_replace($this->modx->config['table_prefix'], '', $this->object->get('name'));
             $package = $this->getProperty('package');
             if (empty($package)) {
-                return $this->modx->lexicon('dbadmin_no_package');
+                return $this->modx->lexicon('dbadmin.no_package');
             }
             $dbtype = $this->modx->getOption('dbtype', null, 'mysql');
+            $packageCorePath = $this->modx->getOption("{$package}.core_path", null, $this->modx->getOption('core_path') . "components/{$package}/");
             if (strpos($package, 'modx') !== false) {
                 $schemaFile = MODX_CORE_PATH . "model/schema/{$package}.{$dbtype}.schema.xml";
             } else {
-                $schemaFile = MODX_CORE_PATH . "components/{$package}/model/schema/{$package}.{$dbtype}.schema.xml";
+                $schemaFile = $packageCorePath . "model/schema/{$package}.{$dbtype}.schema.xml";
             }
             if (!is_file($schemaFile)) {
-                $schemaFile = MODX_CORE_PATH . "components/{$package}/model/{$package}/{$package}.{$dbtype}.schema.xml";
+                $schemaFile = $packageCorePath . "model/{$package}/{$package}.{$dbtype}.schema.xml";
             }
             if (is_file($schemaFile)) {
                 $schema = new SimpleXMLElement($schemaFile, 0, true);
@@ -45,7 +46,7 @@ class dbAdminSetClassProcessor extends modObjectUpdateProcessor {
                 }
                 unset($schema);
             } else {
-                return $this->modx->lexicon('dbadmin_table_err_path');
+                return $this->modx->lexicon('dbadmin.table_err_path');
             }
         }
 

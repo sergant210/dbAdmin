@@ -1,12 +1,28 @@
 <?php
+/**
+ * Resolve table values
+ *
+ * @package dbadmin
+ * @subpackage build
+ *
+ * @var array $options
+ * @var xPDOObject $object
+ */
 
+/**
+ * @param modX $modx
+ * @param array $policy
+ * @param array $template
+ * @param string $permission
+ * @return bool
+ */
 if ($object->xpdo) {
     /** @var modX $modx */
 	$modx =& $object->xpdo;
 
 	switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 		case xPDOTransport::ACTION_INSTALL:
-            $corePath = $modx->getOption('dbadmin_core_path', null, $modx->getOption('core_path') . 'components/dbadmin/');
+            $corePath = $modx->getOption('dbadmin.core_path', null, $modx->getOption('core_path') . 'components/dbadmin/');
             require_once $corePath . 'model/dbadmin/dbadmin.class.php';
             /** @var dbAdmin $dbAdmin */
             $dbAdmin = new dbAdmin($modx);

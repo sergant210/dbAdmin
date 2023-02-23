@@ -1,4 +1,4 @@
-dbAdmin.utils.renderBoolean = function (value, props, row) {
+dbAdmin.utils.renderBoolean = function (value) {
 
 	return value
 		? String.format('<span class="green">{0}</span>', _('yes'))
@@ -16,7 +16,7 @@ dbAdmin.utils.getMenu = function (actions, grid, selected) {
 
 		var a = actions[i];
 		if (!a['menu']) {
-			if (a == '-') {
+			if (a === '-') {
 				menu.push('-');
 			}
 			continue;
@@ -70,7 +70,7 @@ dbAdmin.utils.renderActions = function (value, props, row) {
 		title = a['title'] ? a['title'] : '';
 
 		item = String.format(
-			'<li class="{0}"><button class="btn btn-default {1}" action="{2}" title="{3}"></button></li>',
+			'<li class="{0}"><span class="btn btn-default {1}" data-action="{2}" title="{3}"></span></li>',
 			cls, icon, action, title
 		);
 
@@ -87,7 +87,7 @@ dbAdmin.combo.Types = function(config) {
 	config = config || {};
 	Ext.applyIf(config,{
 		hiddenName: 'outputType',
-		emptyText: _('dbadmin_output_type'),
+		emptyText: _('dbadmin.output_type'),
 		triggerAction: 'all',
 		mode: 'local',
 		hideMode: 'offsets',

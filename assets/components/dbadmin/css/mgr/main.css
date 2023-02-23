@@ -9,11 +9,14 @@ ul.dbadmin-row-actions {
 ul.dbadmin-row-actions li {
 	float: left;
 }
-ul.dbadmin-row-actions .btn {
-	padding: 5px;
-	margin-right: 2px;
-	min-width: 26px;
-	font-size: inherit;
+ul.dbadmin-row-actions li .btn {
+	display: inline-block;
+	font-size: 1.1em;
+	line-height: .7;
+	margin-right: 5px;
+}
+ul.dbadmin-row-actions li:last-child .btn {
+	margin-right: 0;
 }
 .dbadmin-grid-row-disabled {
 	font-style: italic;
@@ -76,3 +79,12 @@ a.x-menu-item .x-menu-item-text .icon {
 ul.dbadmin-row-actions .actions-menu {width: 40px;}
 ul.dbadmin-row-actions .actions-menu:after {content: " \f107";}
 */
+
+#dbadmin-table-window-update .get-class-button {
+	margin-top: 32px;
+	padding: 6px 15px;
+}
+
+#dbadmin-table-window-update.modx3 .get-class-button {
+	padding: 7px 15px;
+}
