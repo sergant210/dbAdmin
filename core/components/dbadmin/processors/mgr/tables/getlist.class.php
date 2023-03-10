@@ -1,48 +1,56 @@
 <?php
+/**
+ * List tables
+ *
+ * @package dbadmin
+ * @subpackage processors
+ */
+
+use Sergant210\dbAdmin\Processors\ObjectGetListProcessor;
 
 /**
- * Get a list of Tables
+ * Class dbAdminTableGetListProcessor
  */
-class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
+class dbAdminTableGetListProcessor extends ObjectGetListProcessor
+{
     public $objectType = 'dbadmin.table';
     public $classKey = 'dbAdminTable';
     public $defaultSortField = 'name';
     public $defaultSortDirection = 'ASC';
     public $permission = 'tables_list';
-    public $tables = array();
+    public $tables = [];
     public $total = 0;
 
+    protected $search = ['name', 'class'];
+
     /**
-     * * We doing special check of permission
-     * because of our objects is not an instances of modAccessibleObject
+     * We're doing special check of permission because our object is not an
+     * instances of modAccessibleObject
      *
      * @return boolean|string
      */
-    public function beforeQuery() {
+    public function beforeQuery()
+    {
         if (!$this->checkPermissions()) {
             return $this->modx->lexicon('access_denied');
         }
-        $this->setDefaultProperties(array('mustUpdate'=>false));
+        $this->setDefaultProperties(['mustUpdate' => false]);
         return true;
     }
 
     /**
+     * {@inheritDoc}
      * @param xPDOQuery $c
-     *
      * @return xPDOQuery
      */
-    public function prepareQueryBeforeCount(xPDOQuery $c) {
-        $query = trim($this->getProperty('query'));
-        if ($query) {
-            $c->where(array(
-                'name:LIKE' => "%{$query}%",
-                'OR:class:LIKE' => "%{$query}%",
-            ));
+    public function prepareQueryBeforeCount(xPDOQuery $c)
+    {
+        $c = parent::prepareQueryBeforeCount($c);
+
+        if ($this->dbadmin->database->needsUpdate()) {
+            $this->dbadmin->database->synchronize();
         }
-        /** @var dbAdmin $dbAdmin */
-        $dbAdmin = $this->modx->getService('dbadmin', 'dbAdmin', $this->modx->getOption('dbadmin.core_path', null, $this->modx->getOption('core_path') . 'components/dbadmin/') . 'model/dbadmin/');
-        if ($dbAdmin->checkNeedUpdate()) $dbAdmin->synchronize();
-        $this->tables = $dbAdmin->getTablesStatus();
+        $this->tables = $this->dbadmin->database->getTablesStatus();
         return $c;
     }
 
@@ -51,67 +59,66 @@ class dbAdminTableGetListProcessor extends modObjectGetListProcessor {
      *
      * @return array
      */
-    public function prepareRow(xPDOObject $object) {
+    public function prepareRow(xPDOObject $object)
+    {
         $row = $object->toArray();
-        $row['actions'] = array();
-        $table = $row['name'];
-        $row = array_merge($row,$this->tables[$table]);
-        $row['actions'] = array();
-
-        // get table data
-        $row['actions'][] = array(
-            'cls' => '',
-            'icon' => 'icon icon-table',
-            'title' => $this->modx->lexicon('dbadmin.table_view'),
-            'action' => 'viewTable',
-            'button' => false,
-            'menu' => true,
-        );
-        // Update a table
-        $row['actions'][] = array(
-            'cls' => '',
-            'icon' => 'icon icon-pencil-square-o',
-            'title' => $this->modx->lexicon('dbadmin.table_properties'),
-            'action' => 'updateTable',
-            'button' => true,
-            'menu' => true,
-        );
-        // Export
-        $row['actions'][] = array(
-            'cls' => '',
-            'icon' => 'icon icon-download',
-            'title' => $this->modx->lexicon('dbadmin.table_export'),
-            'action' => 'exportSelected',
-            'button' => true,
-            'menu' => true,
-        );
-        // truncate
-        $row['actions'][] = array(
-            'cls' => '',
-            'icon' => 'icon icon-eraser',
-            'title' => $this->modx->lexicon('dbadmin.table_truncate'),
-            'action' => 'truncateSelected',
-            'button' => true,
-            'menu' => true,
-        );
-        // Select query
-        $row['actions'][] = array(
-            'cls' => '',
-            'icon' => 'icon icon-file-code-o ',
-            'title' => 'Select from',
-            'action' => 'selectQuery',
-            'button' => true,
-            'menu' => true,
-        );
-        // Remove
-        $row['actions'][] = array(
-            'cls' => '',
-            'icon' => 'icon icon-trash-o action-red',
-            'title' => $this->modx->lexicon('dbadmin.table_remove'),
-            'action' => 'removeTable',
-            'button' => true,
-            'menu' => true,
-        );
+        $row = array_merge($row, $this->tables[$row['name']]);
+        $row['actions'] = [
+            // View/Edit table data
+            [
+                'cls' => '',
+                'icon' => ($row['class']) ? 'icon icon-pencil-square-o' : 'icon icon-eye',
+                'title' => ($row['class']) ? $this->modx->lexicon('dbadmin.table_edit') : $this->modx->lexicon('dbadmin.table_view'),
+                'action' => 'viewTable',
+                'button' => true,
+                'menu' => true,
+            ],
+            // Update table
+            [
+                'cls' => '',
+                'icon' => 'icon icon-wrench',
+                'title' => $this->modx->lexicon('dbadmin.table_properties'),
+                'action' => 'updateTable',
+                'button' => true,
+                'menu' => true,
+            ],
+            // Export table data
+            [
+                'cls' => '',
+                'icon' => 'icon icon-download',
+                'title' => $this->modx->lexicon('dbadmin.table_export'),
+                'action' => 'exportSelected',
+                'button' => true,
+                'menu' => true,
+            ],
+            // Truncate table
+            [
+                'cls' => '',
+                'icon' => 'icon icon-eraser',
+                'title' => $this->modx->lexicon('dbadmin.table_truncate'),
+                'action' => 'truncateSelected',
+                'button' => true,
+                'menu' => true,
+            ],
+            // Select query table
+            [
+                'cls' => '',
+                'icon' => 'icon icon-file-code-o ',
+                'title' => 'Select from',
+                'action' => 'selectQuery',
+                'button' => true,
+                'menu' => true,
+            ],
+            // Remove table
+            [
+                'cls' => '',
+                'icon' => 'icon icon-trash-o action-red',
+                'title' => $this->modx->lexicon('dbadmin.table_remove'),
+                'action' => 'removeTable',
+                'button' => true,
+                'menu' => true,
+            ]
+        ];
 
         return $row;
     }

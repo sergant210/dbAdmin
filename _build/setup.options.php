@@ -14,13 +14,13 @@ $output = '<style type="text/css">
     #modx-setupoptions-form h2 { margin-bottom: 15px; }
 </style>';
 
-$values = array();
+$values = [];
 switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_INSTALL:
         $output .= '<h2>Install dbAdmin</h2>
 
-        <p>Thanks for installing dbAdmin. This open source extra was
-        developed by Treehill Studio - MODX development in Münsterland.</p>
+        <p>Thanks for installing dbAdmin. This open source extra is
+        maintained by Treehill Studio - MODX development in Münsterland.</p>
 
         <p>During the installation, we will collect some statistical data (the
         hostname, the IP address, the PHP version and the MODX version of your
@@ -35,7 +35,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_UPGRADE:
         $output .= '<h2>Upgrade dbAdmin</h2>
 
-        <p>dbAdmin will be upgraded. This open source extra was developed by
+        <p>dbAdmin will be upgraded. This open source extra is maintained by
         Treehill Studio - MODX development in Münsterland.</p>
 
         During the upgrade, we will collect some statistical data (the hostname,

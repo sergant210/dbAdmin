@@ -1,52 +1,71 @@
 <?php
-
 /**
  * Set the class name for a table
+ *
+ * @package dbadmin
+ * @subpackage processors
  */
-class dbAdminSetClassProcessor extends modObjectUpdateProcessor {
+
+use Sergant210\dbAdmin\Processors\ObjectUpdateProcessor;
+
+/**
+ * Class dbAdminSetClassProcessor
+ */
+class dbAdminSetClassProcessor extends ObjectUpdateProcessor
+{
     public $objectType = 'dbadmin.table';
     public $classKey = 'dbAdminTable';
     public $primaryKeyField = 'name';
-    public $languageTopics = array('dbadmin');
     public $permission = 'table_save';
 
     /**
      * {@inheritDoc}
      * @return boolean
      */
-    public function initialize() {
+    public function initialize()
+    {
         $initialized = parent::initialize();
         if ($initialized) {
             $name = str_replace($this->modx->config['table_prefix'], '', $this->object->get('name'));
             $package = $this->getProperty('package');
             if (empty($package)) {
-                return $this->modx->lexicon('dbadmin.no_package');
-            }
-            $dbtype = $this->modx->getOption('dbtype', null, 'mysql');
-            $packageCorePath = $this->modx->getOption("{$package}.core_path", null, $this->modx->getOption('core_path') . "components/{$package}/");
-            if (strpos($package, 'modx') !== false) {
-                $schemaFile = MODX_CORE_PATH . "model/schema/{$package}.{$dbtype}.schema.xml";
-            } else {
-                $schemaFile = $packageCorePath . "model/schema/{$package}.{$dbtype}.schema.xml";
-            }
-            if (!is_file($schemaFile)) {
-                $schemaFile = $packageCorePath . "model/{$package}/{$package}.{$dbtype}.schema.xml";
-            }
-            if (is_file($schemaFile)) {
-                $schema = new SimpleXMLElement($schemaFile, 0, true);
-                if (isset($schema->object)) {
-                    foreach ($schema->object as $object) {
-                        if ($table = (string)$object['table']) {
-                            if ($table != $name) {
-                                continue;
-                            }
-                            $this->setProperty('class', (string)$object['class']);
+                /** @var modNamespace[] $namespaces */
+                $namespaces = $this->modx->getIterator('modNamespace');
+                foreach ($namespaces as $namespace) {
+                    $package = $namespace->get('name');
+                    try {
+                        $class = $this->dbadmin->database->getPackageClass($package, $name);
+                        if ($class) {
+                            break;
                         }
+                    } catch (Exception $e) {
                     }
                 }
-                unset($schema);
+                if (!$class) {
+                    foreach (['modx', 'modx.sources', 'modx.registry.db', 'modx.transport'] as $package) {
+                        try {
+                            $class = $this->dbadmin->database->getPackageClass($package, $name);
+                            if ($class) {
+                                break;
+                            }
+                        } catch (Exception $e) {
+                        }
+                    }
+                    if (!$class) {
+                        $package = '';
+                        $class = '';
+                    }
+                }
             } else {
-                return $this->modx->lexicon('dbadmin.table_err_path');
+                try {
+                    $class = $this->dbadmin->database->getPackageClass($package, $name);
+                } catch (Exception $e) {
+                    return $e->getMessage();
+                }
+            }
+            if ($class) {
+                $this->setProperty('package', $package);
+                $this->setProperty('class', $class);
             }
         }
 

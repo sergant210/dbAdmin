@@ -1,27 +1,36 @@
-## dbAdmin
+[![Default Lexicon](https://hosted.weblate.org/widgets/modx-extras/-/modx-crosslinks-standard/svg-badge.svg)](https://hosted.weblate.org/projects/modx-extras/modx-crosslinks-standard/)
 
---------------------- [ru] ----------------------------  
-dbAdmin - это модуль для MODX Revolution для управления таблицами базы данных.  
- 
-#### Основные возможности:  
-- просмотр таблиц;
-- переименование, очищение и удаление таблиц;
-- экспорт таблиц в текстовый файл;
-- выполнение sql запросов.
+# dbAdmin
 
---------------------- [en] ----------------------------  
-dbAdmin allows you to manage your MySql tables.  
+Database Tables Administration for MODX
 
-#### Base features:
-- browse table;
-- truncate, remove and rename tables;
-- export data to text file.
-- execute sql queries.
+## Features
 
-[![](https://file.modx.pro/files/7/d/9/7d9bbd55381eb03ed3022f179d6dfa6bs.jpg)](https://file.modx.pro/files/7/d/9/7d9bbd55381eb03ed3022f179d6dfa6b.png)
-[![](https://file.modx.pro/files/c/b/a/cba093ec82685bd808a4050a4ef4d7e9s.jpg)](https://file.modx.pro/files/c/b/a/cba093ec82685bd808a4050a4ef4d7e9.png)
+This MODX Extra adds a custom manager page that allows you to administrate your
+databases in MODX.
 
-A short [video](https://youtu.be/Qnm2a8vsqiU)
-## Improvements
-Feel free to suggest ideas/improvements/bugs on GitHub:
-http://github.com/sergant210/dbAdmin/issues
+- Browse tables
+- Truncate, remove and rename tables
+- Export database tables to SQL files
+- Execute SQL queries
+
+## Installation
+
+MODX Package Management
+
+## Usage
+
+Install via package manager and create the crosslinks in the custom manager page.
+
+## Documentation
+
+For more information please read the [documentation](https://jako.github.io/dbAdmin/).
+
+## License
+
+The project is licensed under the [GPLv2 license](https://github.com/Jako/dbAdmin/blob/master/core/components/dbadmin/docs/license.md).
+
+## Translations
+
+Translations of the package can be made for the [Default Lexicon](https://hosted.weblate.org/projects/modx-extras/modx-dbadmin-standard/) and the [Permissions Lexicon](https://hosted.weblate.org/projects/modx-extras/modx-dbadmin-permissions/)
+

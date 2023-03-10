@@ -1,0 +1,30 @@
+{
+  "name": "sergant210/dbadmin",
+  "description": "Calendar management for MODX",
+  "authors": [
+    {
+      "name": "Sergey Shlokov",
+      "email": "sergant210@bk.ru",
+      "homepage": "https://github.com/sergant210"
+    },
+    {
+      "name": "Thomas Jakobi",
+      "email": "office@treehillstudio.com",
+      "homepage": "https://treehillstudio.com"
+    }
+  ],
+  "license": "GPL-2.0-or-later",
+  "config": {
+    "platform": {
+      "php": "7.4"
+    }
+  },
+  "require": {
+    "php": ">=7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sergant210\\dbAdmin\\": "src/"
+    }
+  }
+}

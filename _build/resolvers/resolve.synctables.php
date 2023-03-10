@@ -20,7 +20,7 @@ if (!function_exists('updateTableColumns')) {
         $tableName = str_replace('`', '', $tableName);
         $dbname = $modx->getOption('dbname');
 
-        $c = $modx->prepare("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = :dbName AND table_name = :tableName");
+        $c = $modx->prepare('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = :dbName AND table_name = :tableName');
         $c->bindParam(':dbName', $dbname);
         $c->bindParam(':tableName', $tableName);
         $c->execute();
@@ -112,7 +112,7 @@ if ($object->xpdo) {
             $modx = &$object->xpdo;
 
             $tables = [
-                "dbAdminTable"
+                'dbAdminTable'
             ];
 
             $modelPath = $modx->getOption('dbadmin.core_path', null, $modx->getOption('core_path') . 'components/dbadmin/') . 'model/';

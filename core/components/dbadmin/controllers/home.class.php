@@ -30,17 +30,26 @@ class dbAdminHomeManagerController extends modExtraManagerController
      */
     public function loadCustomCssJs()
     {
+        $assetsUrl = $this->dbadmin->getOption('assetsUrl');
         $jsUrl = $this->dbadmin->getOption('jsUrl') . 'mgr/';
+        $jsSourceUrl = $assetsUrl . '../../../source/js/mgr/';
         $cssUrl = $this->dbadmin->getOption('cssUrl') . 'mgr/';
+        $cssSourceUrl = $assetsUrl . '../../../source/css/mgr/';
 
-        $this->addCss($cssUrl . 'main.css?v=v' . $this->dbadmin->version);
-        $this->addJavascript($jsUrl . 'dbadmin.js?v=v' . $this->dbadmin->version);
-        $this->addJavascript($jsUrl . 'misc/utils.js?v=v' . $this->dbadmin->version);
-        $this->addJavascript($jsUrl . 'widgets/home.panel.js?v=v' . $this->dbadmin->version);
-        $this->addJavascript($jsUrl . 'widgets/table.window.js?v=v' . $this->dbadmin->version);
-        $this->addJavascript($jsUrl . 'widgets/tables.grid.js?v=v' . $this->dbadmin->version);
-        $this->addJavascript($jsUrl . 'widgets/data.grid.js?v=v' . $this->dbadmin->version);
-        $this->addJavascript($jsUrl . 'sections/home.js?v=v' . $this->dbadmin->version);
+        if ($this->dbadmin->getOption('debug') && ($assetsUrl != MODX_ASSETS_URL . 'components/dbadmin/')) {
+            $this->addCss($cssUrl . 'main.css?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'dbadmin.js?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'misc/utils.js?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'widgets/home.panel.js?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'widgets/table.window.js?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'widgets/tables.grid.js?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'widgets/sql.panel.js?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'widgets/data.grid.js?v=v' . $this->dbadmin->version);
+            $this->addJavascript($jsUrl . 'sections/home.js?v=v' . $this->dbadmin->version);
+        } else {
+            $this->addCss($cssUrl . 'dbadmin.min.css?v=v' . $this->dbadmin->version);
+            $this->addLastJavascript($jsUrl . 'dbadmin.min.js?v=v' . $this->dbadmin->version);
+        }
         $this->addHtml('<script type="text/javascript">
 		Ext.onReady(function() {
             dbAdmin.config = ' . json_encode($this->dbadmin->options, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . ';
@@ -64,7 +73,6 @@ class dbAdminHomeManagerController extends modExtraManagerController
      */
     public function process(array $scriptProperties = [])
     {
-        $this->modx->invokeEvent('OnSnipFormPrerender');
     }
 
     /**
