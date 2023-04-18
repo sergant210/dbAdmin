@@ -19,7 +19,9 @@
 function createAccessPermission(&$modx, $policy, $template, $permission)
 {
     /** @var modAccessPolicyTemplate $accessPolicyTemplate */
-    if (!$accessPolicyTemplate = $modx->getObject('modAccessPolicyTemplate', ['name' => $template['name']])
+    if (!$accessPolicyTemplate = $modx->getObject('modAccessPolicyTemplate', [
+        'name' => $template['name']
+    ])
     ) {
         $accessPolicyTemplate = $modx->newObject('modAccessPolicyTemplate');
         $accessPolicyTemplate->fromArray([
@@ -45,28 +47,32 @@ function createAccessPermission(&$modx, $policy, $template, $permission)
             'lexicon' => $policy['lexicon']
         ]);
         $accessPolicy->addOne($accessPolicyTemplate, 'Template');
-        $accessPolicy->save();
         $modx->log(xPDO::LOG_LEVEL_INFO, 'Access Policy "' . $policy['name'] . '" created.');
     } else {
         $data = $accessPolicy->get('data');
         $data = ($data) ? array_merge($data, [$permission => true]) : [$permission => true];
         $accessPolicy->set('data', $data);
-        $accessPolicy->save();
         $modx->log(xPDO::LOG_LEVEL_INFO, 'Access Policy "' . $policy['name'] . '" updated.');
     }
+    $accessPolicy->save();
 
-    if (!$modx->getObject('modAccessPermission', ['name' => $permission])) {
+    if (!$accessPermission = $modx->getObject('modAccessPermission', [
+        'name' => $permission
+    ])) {
         /** @var modAccessPermission $accessPermission */
         $accessPermission = $modx->newObject('modAccessPermission');
         $accessPermission->fromArray([
             'name' => $permission,
-            'description' => 'agenda.permission.' . $permission . '_desc',
+            'description' => 'dbadmin.permission.' . $permission . '_desc',
             'value' => '1'
         ]);
         $accessPermission->addOne($accessPolicyTemplate, 'Template');
-        $accessPermission->save();
         $modx->log(xPDO::LOG_LEVEL_INFO, 'Access Permission "' . $permission . '" created.');
+    } else {
+        $accessPermission->set('description', 'dbadmin.permission.' . $permission . '_desc');
+        $modx->log(xPDO::LOG_LEVEL_INFO, 'Access Permission "' . $permission . '" updated.');
     }
+    $accessPermission->save();
     return true;
 }
 
