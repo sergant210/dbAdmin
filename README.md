@@ -24,11 +24,11 @@ Install via package manager and create the crosslinks in the custom manager page
 
 ## Documentation
 
-For more information please read the [documentation](https://jako.github.io/dbAdmin/).
+For more information please read the [documentation](https://sergant210.github.io/dbAdmin/).
 
 ## License
 
-The project is licensed under the [GPLv2 license](https://github.com/Jako/dbAdmin/blob/master/core/components/dbadmin/docs/license.md).
+The project is licensed under the [GPLv2 license](https://github.com/sergant210/dbAdmin/blob/master/core/components/dbadmin/docs/license.md).
 
 ## Translations
 
