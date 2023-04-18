@@ -3,7 +3,7 @@
   "lowCaseName": "dbadmin",
   "description": "Database Tables Administration for MODX",
   "author": "Sergei Shlokov, Thomas Jakobi",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "package": {
     "menus": [
       {

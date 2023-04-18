@@ -41,7 +41,7 @@ class dbAdmin
      * The version
      * @var string $version
      */
-    public $version = '1.3.0-rc1';
+    public $version = '1.3.1';
 
     /**
      * The class options
