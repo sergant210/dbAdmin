@@ -31,9 +31,10 @@ if ($object->xpdo) {
             if (!$modx->getCount('dbAdminTable')) {
                 $tables = array_merge($dbadmin->database->getDbTables(), $dbadmin->database->getSystemTables());
                 foreach ($tables as $name => $info) {
+                    /** @var dbAdminTable $obj */
                     $obj = $modx->newObject('dbAdminTable');
                     $obj->set('name', $name);
-                    $this->dbadmin->database->setTableClass($obj);
+                    $dbadmin->database->setTableClass($obj);
                     $obj->save();
                 }
             }
