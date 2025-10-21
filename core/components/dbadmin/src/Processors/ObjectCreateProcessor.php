@@ -65,7 +65,7 @@ class ObjectCreateProcessor extends modObjectCreateProcessor
     }
 
     /**
-     * Create an unique alias
+     * Create a unique alias
      *
      * @param $alias
      * @return string

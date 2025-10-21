@@ -65,7 +65,7 @@ class ObjectUpdateProcessor extends modObjectUpdateProcessor
     }
 
     /**
-     * Create an unique alias
+     * Create a unique alias
      *
      * @param $alias
      * @return string
