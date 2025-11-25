@@ -332,12 +332,13 @@ class Database
         $dbtype = $this->modx->getOption('dbtype', null, 'mysql');
         $packageCorePath = $this->modx->getOption($package . '.core_path', null, $this->modx->getOption('core_path') . 'components/' . $package . '/');
         if (strpos($package, 'modx') !== false) {
-            $schemaFile = MODX_CORE_PATH . "model/schema/$package.$dbtype.schema.xml";
+            $schemaFile = MODX_CORE_PATH . 'model/schema/' . $package . '.' . $dbtype . '.schema.xml';
+        } elseif (is_file($packageCorePath . 'model/schema/' . $package . '.' . $dbtype . '.schema.xml')) {
+            $schemaFile = $packageCorePath . 'model/schema/' . $package . '.' . $dbtype . '.schema.xml';
+        } elseif (is_file($packageCorePath . 'schema/' . $package . '.' . $dbtype . '.schema.xml')) {
+            $schemaFile = $packageCorePath . 'schema/' . $package . '.' . $dbtype . '.schema.xml';
         } else {
-            $schemaFile = $packageCorePath . "model/schema/$package.$dbtype.schema.xml";
-        }
-        if (!is_file($schemaFile)) {
-            $schemaFile = $packageCorePath . "model/$package/$package.$dbtype.schema.xml";
+            $schemaFile = $packageCorePath . 'model/' . $package . '/' . $package . '.' . $dbtype . '.schema.xml';
         }
         if (is_file($schemaFile)) {
             try {
