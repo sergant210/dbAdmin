@@ -41,7 +41,7 @@ $accessPolicies = [
  * @param string $permission
  * @return bool
  */
-function createAccessPermission(&$modx, $policy, $template, $permission)
+function createAccessPermission($modx, $policy, $template, $permission)
 {
     /** @var modAccessPolicyTemplate $accessPolicyTemplate */
     if (!$accessPolicyTemplate = $modx->getObject('modAccessPolicyTemplate', [
@@ -82,7 +82,8 @@ function createAccessPermission(&$modx, $policy, $template, $permission)
     $accessPolicy->save();
 
     if (!$accessPermission = $modx->getObject('modAccessPermission', [
-        'name' => $permission
+        'name' => $permission,
+        'template' => $accessPolicyTemplate->get('id')
     ])) {
         /** @var modAccessPermission $accessPermission */
         $accessPermission = $modx->newObject('modAccessPermission');
@@ -108,7 +109,7 @@ function createAccessPermission(&$modx, $policy, $template, $permission)
  * @param string $permission
  * @return bool
  */
-function removeAccessPermission(&$modx, $policy, $template, $permission)
+function removeAccessPermission($modx, $policy, $template, $permission)
 {
     /** @var modAccessPermission $accessPermission */
     if ($accessPolicy = $modx->getObject('modAccessPolicy', ['name' => $policy['name']])) {
@@ -130,11 +131,11 @@ function removeAccessPermission(&$modx, $policy, $template, $permission)
 
 $success = true;
 if ($object->xpdo) {
+    /** @var modX $modx */
+    $modx = &$object->xpdo;
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
-            /** @var modX $modx */
-            $modx = &$object->xpdo;
             foreach ($accessPolicies as $accessPolicy) {
                 foreach ($accessPolicy['permissions'] as $accessPermission) {
                     $result = createAccessPermission($modx, $accessPolicy['policy'], $accessPolicy['template'], $accessPermission);
