@@ -97,7 +97,7 @@ Ext.extend(dbAdmin.grid.Tables, MODx.grid.Grid, {
     getMenu: function (grid, rowIndex) {
         var ids = this._getSelectedIds();
         var row = grid.getStore().getAt(rowIndex);
-        var menu = dbAdmin.utils.getMenu(row.data['actions'], this, ids);
+        var menu = dbAdmin.utils.getMenu(row.data.actions, this, ids);
         this.addContextMenuItem(menu);
     },
     exportSelected: function (b) {
