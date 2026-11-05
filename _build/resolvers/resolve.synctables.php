@@ -6,7 +6,7 @@
  * @subpackage build
  *
  * @var array $options
- * @var xPDOObject $object
+ * @var xPDOTransport $transport
  */
 
 if (!function_exists('updateTableColumns')) {
@@ -104,26 +104,25 @@ if (!function_exists('alterTable')) {
     }
 }
 
-if ($object->xpdo) {
-    switch ($options[xPDOTransport::PACKAGE_ACTION]) {
-        case xPDOTransport::ACTION_INSTALL:
-        case xPDOTransport::ACTION_UPGRADE:
-            /** @var modX $modx */
-            $modx = &$object->xpdo;
+/** @var modX $modx */
+$modx = $transport->xpdo;
 
-            $tables = [
-                'dbAdminTable'
-            ];
+$success = true;
 
-            $modelPath = $modx->getOption('dbadmin.core_path', null, $modx->getOption('core_path') . 'components/dbadmin/') . 'model/';
-            $modx->addPackage('dbadmin', $modelPath);
+switch ($options[xPDOTransport::PACKAGE_ACTION]) {
+    case xPDOTransport::ACTION_INSTALL:
+    case xPDOTransport::ACTION_UPGRADE:
+        $tables = [
+            "dbAdminTable"
+        ];
 
-            foreach ($tables as $table) {
-                $modx->log(xPDO::LOG_LEVEL_INFO, 'Altering table: ' . $table);
-                alterTable($modx, $table);
-            }
+        $modelPath = $modx->getOption('dbadmin.core_path', null, $modx->getOption('core_path') . 'components/dbadmin/') . 'model/';
+        $modx->addPackage('dbadmin', $modelPath);
 
-            break;
-    }
+        foreach ($tables as $table) {
+            $modx->log(xPDO::LOG_LEVEL_INFO, 'Altering table: ' . $table);
+            alterTable($modx, $table);
+        }
+        break;
 }
-return true;
+return $success;

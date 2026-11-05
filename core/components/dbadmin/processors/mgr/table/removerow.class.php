@@ -19,55 +19,40 @@ class dbAdminRemoveTableRowProcessor extends ObjectRemoveProcessor
     public $permission = 'table_save';
 
     /**
+     * The row data is only used to identify the record and is never merged
+     * into the processor properties, so a table column named i.e. class or
+     * package can't override the processor parameters.
+     *
      * {@inheritDoc}
      * @return boolean
      */
     public function initialize()
     {
-        $data = $this->getProperty('data');
-        if (empty($data)) {
+        $row = $this->modx->fromJSON($this->getProperty('data', ''));
+        if (!is_array($row) || empty($row)) {
             return $this->modx->lexicon('dbadmin.invalid_data');
         }
-        $properties = $this->modx->fromJSON($data);
-        $this->setProperties($properties);
-        $this->unsetProperty('data');
-        $this->classKey = trim($this->getProperty('class'));
-        $package = strtolower(trim($this->getProperty('package', '')));
-        if (empty($this->classKey) || empty($package)) {
+        $this->classKey = trim((string)$this->getProperty('class', ''));
+        $package = strtolower(trim((string)$this->getProperty('package', '')));
+        if (empty($this->classKey) || !$this->dbadmin->database->isValidPackageName($package)) {
             return $this->modx->lexicon('dbadmin.invalid_data');
         }
-
-        $path = MODX_CORE_PATH . 'components/' . $package . '/model/';
-
-        if (!preg_match('/^modx/', $package)) {
-            if (is_dir($path)) {
-                if (!$this->modx->addPackage($package, $path)) {
-                    $this->classKey = '';
-                    $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('dbadmin.err_path'));
-                }
-            } else {
-                $this->classKey = '';
-            }
+        $table = trim((string)$this->getProperty('table', ''));
+        if (!$this->dbadmin->database->loadTableClass($this->classKey, $package, $table)) {
+            return $this->modx->lexicon('dbadmin.class_err_table');
         }
-        if (!$this->classKey) {
-            return false;
+        if (!$this->dbadmin->database->canChangeClassTable($this->classKey)) {
+            return $this->modx->lexicon('dbadmin.table_err_core');
         }
 
         $this->primaryKeyFields = $this->modx->getPK($this->classKey);
-        if (is_array($this->primaryKeyFields)) {
-            $primaryKeys = [];
-            foreach ($this->primaryKeyFields as $key) {
-                $primaryKeys[$key] = $this->getProperty($key);
-            }
-        } else {
-            $primaryKeys = $this->getProperty($this->primaryKeyFields, false);
-        }
-        if (empty($primaryKeys)) {
-            return $this->modx->lexicon($this->objectType . '_err_ns');
+        $primaryKeys = $this->dbadmin->database->getRowPrimaryKeys($this->classKey, $row);
+        if ($primaryKeys === null) {
+            return $this->modx->lexicon('dbadmin.row_err_ns');
         }
         $this->object = $this->modx->getObject($this->classKey, $primaryKeys);
         if (empty($this->object)) {
-            return $this->modx->lexicon($this->objectType . '_err_nf');
+            return $this->modx->lexicon('dbadmin.row_err_nf');
         }
 
         return true;

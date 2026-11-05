@@ -38,7 +38,11 @@ class dbAdminTableDataGetListProcessor extends ObjectGetListProcessor
      */
     public function beforeQuery()
     {
-        $this->classKey = $this->getProperty('class');
+        $this->classKey = trim((string)$this->getProperty('class', ''));
+        $package = (string)$this->getProperty('package', '');
+        if ($package !== '' && !$this->dbadmin->database->isValidPackageName($package)) {
+            return $this->modx->lexicon('dbadmin.package_err_name');
+        }
         return true;
     }
 
@@ -49,19 +53,26 @@ class dbAdminTableDataGetListProcessor extends ObjectGetListProcessor
     public function getData()
     {
         $limit = intval($this->getProperty('limit'));
-        $start = intval($this->getProperty('start'));
-        $package = strtolower($this->getProperty('package', ''));
-        $path = $this->modx->getOption($package . '.core_path', null, $this->modx->getOption('core_path') . 'components/' . $package . '/') . 'model/';
-        $foundClass = $this->isClass($package, $path);
+        $start = max(0, intval($this->getProperty('start')));
+        $package = strtolower((string)$this->getProperty('package', ''));
+        $foundClass = $this->dbadmin->database->loadTableClass((string)$this->classKey, $package, (string)$this->getProperty('table', ''));
         if ($foundClass) {
             $data = $this->fetchClassData($limit, $start);
         } else {
             $data = $this->fetchSqlData($limit, $start);
         }
+        $canChange = $foundClass && $this->modx->hasPermission('table_save') && $this->dbadmin->database->canChangeClassTable($this->classKey);
+        // The values are returned unescaped, the grid encodes them for the output
         foreach ($data['results'] as &$row) {
-            $row = array_map('htmlspecialchars', $row);
+            foreach ($row as &$value) {
+                // Binary values can't be JSON encoded, show them as hex
+                if (is_string($value) && !mb_check_encoding($value, 'UTF-8')) {
+                    $value = '0x' . bin2hex($value);
+                }
+            }
+            unset($value);
             $row['actions'] = [];
-            if ($foundClass) {
+            if ($canChange) {
                 // Remove row
                 $row['actions'][] = [
                     'cls' => '',
@@ -120,8 +131,8 @@ class dbAdminTableDataGetListProcessor extends ObjectGetListProcessor
             'total' => 0
         ];
         $table = $this->getProperty('table');
-        if (!empty($table)) {
-            $table = $this->modx->escape($table);
+        if ($this->dbadmin->database->tableExists($table)) {
+            $table = $this->dbadmin->database->quoteIdentifier($table);
             $sql = 'SELECT COUNT(*) FROM ' . $table;
             try {
                 if ($stmt = $this->modx->prepare($sql)) {
@@ -132,7 +143,7 @@ class dbAdminTableDataGetListProcessor extends ObjectGetListProcessor
                 $this->modx->log(xPDO::LOG_LEVEL_ERROR, $e->getMessage(), '', 'dbAdminTableDataGetListProcessor');
                 return $data;
             }
-            $sql = 'SELECT * FROM ' . $table;
+            $sql = 'SELECT * FROM ' . $table . $this->getSqlOrderBy($table);
             if ($limit > 0) {
                 $sql .= " LIMIT $start, $limit";
             }
@@ -150,32 +161,27 @@ class dbAdminTableDataGetListProcessor extends ObjectGetListProcessor
     }
 
     /**
-     * Check if the package and the path reference an xPDO package and add that xPDO package
-     *
-     * @param string $package
-     * @param string $path
-     * @return bool
+     * Get the ORDER BY clause of the grid sorting, if the sort column exists in the table
+     * @param string $table The quoted table name
+     * @return string
      */
-    private function isClass(string $package, string $path): bool
+    private function getSqlOrderBy(string $table): string
     {
-        $foundClass = true;
-        if (empty($this->classKey)) {
-            $foundClass = false;
+        $sort = (string)$this->getProperty('sort', '');
+        if ($sort === '') {
+            return '';
         }
-        if (!preg_match('/^modx/', $package)) {
-            if (is_dir($path)) {
-                if (!$this->modx->addPackage($package, $path)) {
-                    $foundClass = false;
-                }
-            } else {
-                $foundClass = false;
-            }
-        } elseif ($package != 'modx') {
-            if (!$this->modx->addPackage($package, $this->modx->getOption('core_path') . 'model/')) {
-                $foundClass = false;
-            }
+        try {
+            $stmt = $this->modx->query('SHOW COLUMNS FROM ' . $table);
+            $columns = $stmt ? $stmt->fetchAll(PDO::FETCH_COLUMN, 0) : [];
+        } catch (PDOException $e) {
+            return '';
         }
-        return $foundClass;
+        if (!in_array($sort, $columns, true)) {
+            return '';
+        }
+        $dir = (strtoupper((string)$this->getProperty('dir', '')) === 'DESC') ? 'DESC' : 'ASC';
+        return ' ORDER BY ' . $this->dbadmin->database->quoteIdentifier($sort) . ' ' . $dir;
     }
 }
 

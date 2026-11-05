@@ -43,7 +43,7 @@ Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
             border: false,
             anchor: '100%',
             items: [{
-                columnWidth: .85,
+                columnWidth: 0.85,
                 layout: 'form',
                 defaults: {msgTarget: 'under'},
                 border: false,
@@ -55,7 +55,7 @@ Ext.extend(dbAdmin.window.UpdateTable, MODx.Window, {
                     anchor: '100%'
                 }]
             }, {
-                columnWidth: .15,
+                columnWidth: 0.15,
                 layout: 'form',
                 defaults: {msgTarget: 'qtip'},
                 style: {marginTop: '5px'},

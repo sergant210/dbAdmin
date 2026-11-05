@@ -27,3 +27,9 @@ For more information please read the [documentation](https://jako.github.io/dbAd
 ## GitHub Repository
 
 https://github.com/Jako/dbAdmin
+
+## Third party licenses
+
+This extra includes third party software, for which we are thankful.
+
+* ifsnop/mysqldump-php@v2.13 [GPL-3.0-or-later]

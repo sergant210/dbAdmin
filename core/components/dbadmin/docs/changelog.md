@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-11-05
+
+### Added
+
+- Permission table_core_edit for changing MODX core tables
+- Editable primary keys and a context menu in the table data grid
+
+### Changed
+
+- Database exports with mysqldump-php
+- More descriptive SQL results and error messages, results of all queries returning rows
+- Compact table data grid, that scrolls inside the window
+- Hide the actions and the SQL tab without the needed permission
+- Analyze only changed InnoDB tables
+- Install the composer dependencies on the server
+
+### Fixed
+
+- Table data window in MODX 3 and editing in the table data grid
+- Wrong or missing table classes in the table data grid, the class search and SQL queries
+- Removing, renaming and truncating tables and views on MySQL errors
+- Exporting views and binary values in SQL results
+- Context menus, lexicon strings and PHP 8 errors in the tables list
+- The uninstallation removed permissions of other extras
+
+### Security
+
+- Path traversal, SQL injections and XSS by table names, classes and packages
+- Database exports outside the web root, removed after the download
+- Check the tables_list permission for the manager page and the menu
+
 ## [1.4.1] - 2025-07-22
 
 ### Fixed

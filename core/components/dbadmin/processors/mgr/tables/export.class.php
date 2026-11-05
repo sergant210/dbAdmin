@@ -6,6 +6,7 @@
  * @subpackage processors
  */
 
+use Ifsnop\Mysqldump\Mysqldump;
 use Sergant210\dbAdmin\Processors\Processor;
 
 /**
@@ -20,175 +21,98 @@ class dbAdminExportTablesProcessor extends Processor
      */
     public function process()
     {
+        $database = $this->dbadmin->database;
+        $allTables = array_keys($database->getDbTables());
+        $exportDb = ($this->getProperty('export_db') == 'true');
         $tables = $this->getProperty('tables', '');
-        if ($this->getProperty('export_db') == 'true') {
-            $tables = $this->getTables();
-            $fileName = $this->modx->config['dbname'] . '_' . date('Ymd_His') . '.sql';
+        if ($exportDb) {
+            $selected = $allTables;
+            $prefix = preg_replace('/[^\w.-]/', '_', (string)$this->modx->getOption('dbname'));
         } elseif (!empty($tables)) {
-            $tables = array_map('trim', explode(',', $tables));
-            sort($tables);
-            $fileName = 'custom_' . date('Ymd_His') . '.sql';
+            $selected = array_map('trim', explode(',', $tables));
+            foreach ($selected as $table) {
+                if (!$database->tableExists($table)) {
+                    return $this->failure($this->modx->lexicon('dbadmin.table_err_nf'));
+                }
+            }
+            $prefix = 'custom';
         } else {
             return $this->failure($this->modx->lexicon('dbadmin.table_err_ns'));
         }
-        $path = $this->modx->getOption('dbadmin.assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/') . 'export/';
-        if (!is_dir($path) && !mkdir($path, 0755)) {
+        if (empty($selected)) {
+            return $this->failure($this->modx->lexicon('dbadmin.table_err_ns'));
+        }
+        // Add a random token, so that the file name can't be guessed
+        $fileName = $prefix . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(8)) . '.sql';
+        $path = $database->getExportPath();
+        if (!is_dir($path) && !mkdir($path, 0755, true)) {
             return $this->failure($this->modx->lexicon('dbadmin.table_err_path'));
         }
-        $sql = '-- ' . $this->modx->lexicon('dbadmin.createdon') . date('j M Y, H:i') . "\n\n";
-        foreach ($tables as $table) {
-            $sql .= $this->prepareTableCreateSql($table);
-            $sql .= $this->prepareTableInsertSql($table);
-            $sql .= "\n\n-- --------------------------------------------------------\n\n";
-        }
-        if (!empty($tables)) {
-            file_put_contents($path . $fileName, $sql);
+
+        $config = $this->modx->connection->config;
+        $dumpSettings = [
+            // Exclude instead of include, because empty include lists mean all tables or views
+            'exclude-tables' => array_values(array_diff($allTables, $selected)),
+            'add-drop-table' => true,
+            'default-character-set' => $this->getCharset($config['dsn']),
+            // The single transaction creates a consistent snapshot without the LOCK TABLES privilege
+            'lock-tables' => false,
+            // Make the dump importable with a different database user
+            'skip-definer' => true,
+            // The triggers of all tables are exported, so only for the whole database
+            'skip-triggers' => !$exportDb,
+        ];
+
+        @set_time_limit(0);
+        try {
+            $dump = new Mysqldump($config['dsn'], $config['username'], $config['password'], $dumpSettings);
+            $dump->start($path . $fileName);
+            $this->replaceHeader($path . $fileName);
+        } catch (Exception $e) {
+            @unlink($path . $fileName);
+            $this->modx->log(modX::LOG_LEVEL_ERROR, $e->getMessage(), '', 'dbAdminExportTablesProcessor');
+            return $this->failure($this->modx->lexicon('dbadmin.export_err', ['message' => $e->getMessage()]));
         }
 
         return $this->success('', ['name' => $fileName]);
     }
 
     /**
-     * Get tables
-     * @return array
+     * Mention dbAdmin in the first line of the dump. The line is replaced in
+     * place with the same length, so the (maybe large) file is not copied.
+     * @param string $file
+     * @return void
      */
-    protected function getTables()
+    protected function replaceHeader(string $file)
     {
-        $tables = [];
-        $sql = 'SHOW TABLE STATUS';
-        try {
-            if ($stmt = $this->modx->prepare($sql)) {
-                $stmt->execute();
-                while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-                    $tables[] = $row[0];
-                }
-            }
-        } catch (PDOException $e) {
-            $this->modx->log(xPDO::LOG_LEVEL_ERROR, $e->getMessage(), '', 'dbAdminExportTablesProcessor');
+        $original = '-- mysqldump-php https://github.com/ifsnop/mysqldump-php';
+        $header = '-- dbAdmin ' . $this->dbadmin->version . ' (MODX) with mysqldump-php';
+        if (strlen($header) > strlen($original)) {
+            return;
         }
-        return $tables;
+        $handle = @fopen($file, 'r+b');
+        if (!$handle) {
+            return;
+        }
+        // Only replace the expected line, i.e. not after a changed library header
+        if (fread($handle, strlen($original)) === $original) {
+            fseek($handle, 0);
+            fwrite($handle, str_pad($header, strlen($original)));
+        }
+        fclose($handle);
     }
 
     /**
-     * Prepare SQL for creating a table
-     * @param $table
+     * Get the connection charset from the DSN
+     * @param string $dsn
      * @return string
      */
-    protected function prepareTableCreateSql($table)
+    protected function getCharset(string $dsn): string
     {
-        $table = $this->modx->escape($table);
-        $sql = "--\n-- " . $this->modx->lexicon('dbadmin.table_structure') . ' ' . $table . "\n--\n\n";
-        try {
-            if ($stmt = $this->modx->prepare('SHOW CREATE TABLE ' . $table)) {
-                $stmt->execute();
-                $tables = $stmt->fetch(PDO::FETCH_ASSOC);
-                $sql .= 'DROP TABLE IF EXISTS ' . $table . ";\n";
-                $sql .= $tables['Create Table'] . ";\n";
-            }
-        } catch (PDOException $e) {
-            $this->modx->log(xPDO::LOG_LEVEL_ERROR, $e->getMessage(), '', 'dbAdminExportTablesProcessor');
+        if (preg_match('/[;:]charset=(\w+)/i', $dsn, $match) && strtolower($match[1]) === 'utf8') {
+            return Mysqldump::UTF8;
         }
-        return $sql;
-    }
-
-    /**
-     * Prepare SQL for inserting data into a table
-     * @param $table
-     * @return string
-     */
-    protected function prepareTableInsertSql($table)
-    {
-        // Get fields
-        $table = $this->modx->escape($table);
-        $fields = $this->getFields($table);
-        if ($fields === false) {
-            return '';
-        }
-        $_fieldList = '';
-        foreach ($fields as $field) {
-            if (!empty($_fieldList)) {
-                $_fieldList .= ', ';
-            }
-            $_fieldList .= $this->modx->escape($field['name']);
-        }
-        // Fetch data
-        try {
-            $rows = [];
-            if ($stmt = $this->modx->prepare('SELECT ' . $_fieldList . ' FROM ' . $table)) {
-                $stmt->execute();
-                if (!$rows = $stmt->fetchAll(PDO::FETCH_NUM)) {
-                    return '';
-                }
-            }
-        } catch (PDOException $e) {
-            $this->modx->log(xPDO::LOG_LEVEL_ERROR, $e->getMessage(), '', 'dbAdminExportTablesProcessor');
-            return '';
-        }
-        $num_rows = count($rows);
-        $num_cols = count($rows[0]);
-        $sql = "\n--\n-- " . $this->modx->lexicon('dbadmin.table_dump') . " $table\n--\n\n";
-
-        // Prepare SQL
-        $sql .= 'INSERT INTO ' . $table . ' (' . $_fieldList . ') VALUES' . "\n";
-        for ($i = 0; $i < $num_rows; ++$i) {
-            $sql .= '(';
-            for ($j = 0; $j < $num_cols; ++$j) {
-                if (is_null($rows[$i][$j])) {
-                    $sql .= 'NULL';
-                } elseif ($fields[$j]['type'] == 'string') {
-                    $val = "'" . addslashes($rows[$i][$j]) . "'";
-                    $sql .= strtr($val, ["\n" => '\n', "\r" => '\r', "\t" => '\t']
-                    );
-                } elseif (!is_numeric($rows[$i][$j])) {
-                    $sql .= '\'' . $rows[$i][$j] . '\'';
-                } else {
-                    $sql .= $rows[$i][$j];
-                }
-                if ($j != $num_cols - 1) {
-                    $sql .= ', ';
-                }
-            }
-            $sql .= ')';
-            if ($i != ($num_rows - 1)) {
-                $sql .= ",\n";
-            }
-        }
-        $sql .= ';';
-        return $sql;
-    }
-
-    /**
-     * Get array of fields
-     * @param $table
-     * @return array|bool
-     */
-    protected function getFields($table)
-    {
-        $sql = 'SHOW COLUMNS FROM ' . $table;
-        try {
-            $data = [];
-            if ($stmt = $this->modx->prepare($sql)) {
-                $stmt->execute();
-                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
-        } catch (PDOException $e) {
-            return false;
-        }
-        $fields = [];
-        $i = 0;
-        foreach ($data as $field) {
-            $fields[$i]['name'] = $field['Field'];
-            foreach (['int', 'decimal', 'float', 'double', 'real'] as $type) {
-                if (stripos($field['Type'], $type) !== false) {
-                    $fields[$i]['type'] = 'number';
-                    break;
-                } else {
-                    $fields[$i]['type'] = 'string';
-                }
-            }
-            $i++;
-        }
-        return $fields;
+        return Mysqldump::UTF8MB4;
     }
 }
 

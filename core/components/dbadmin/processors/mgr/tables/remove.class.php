@@ -26,8 +26,14 @@ class dbAdminTableMultiRemoveProcessor extends Processor
         if (empty($tables)) {
             return $this->failure($this->modx->lexicon('dbadmin.table_err_ns'));
         }
+        $tables = array_map('trim', explode(',', $tables));
+        foreach ($tables as $name) {
+            if (!$this->dbadmin->database->canChangeTable($name)) {
+                return $this->failure($this->modx->lexicon('dbadmin.table_err_core'));
+            }
+        }
         $processorProps = ['processors_path' => dirname(dirname(__FILE__)) . '/table/'];
-        foreach (explode(',', $tables) as $name) {
+        foreach ($tables as $name) {
             $response = $this->modx->runProcessor('remove', ['name' => $name], $processorProps);
             if ($response->isError()) {
                 return $response->response;

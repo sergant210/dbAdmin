@@ -42,6 +42,6 @@ To work with the component the user must have appropriate rights:
 - table_truncate - Permission to delete all records from a table (truncate table).
 - table_remove - Permission to delete a table (drop table).
 - table_export - Permission to export a table.
-- sql_query_execute - Permission to export a table.
+- sql_query_execute - Permission to execute SQL queries.
 
 A sudo user is allowed to do everything.

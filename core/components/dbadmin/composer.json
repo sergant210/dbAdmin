@@ -1,7 +1,7 @@
 {
   "name": "sergant210/dbadmin",
-  "description": "Calendar management for MODX",
-  "version": "1.4.1",
+  "description": "Database Tables Administration for MODX",
+  "version": "1.5.0",
   "authors": [
     {
       "name": "Sergey Shlokov",
@@ -23,7 +23,8 @@
   "require": {
     "php": ">=7.4",
     "ext-pdo": "*",
-    "ext-simplexml": "*"
+    "ext-simplexml": "*",
+    "ifsnop/mysqldump-php": "^2.13"
   },
   "autoload": {
     "psr-4": {
