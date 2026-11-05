@@ -21,22 +21,26 @@ class dbAdminDownloadTablesProcessor extends Processor
      */
     public function process()
     {
-        $filename = $this->getProperty('name', 'db_backup.sql');
-        $path = $this->modx->getOption('dbadmin.assets_path', NULL, $this->modx->getOption('assets_path') . 'components/dbadmin/') . 'export/';
-        $f = $path . $filename;
-        if (!file_exists($f)) {
+        $filename = basename((string)$this->getProperty('name', ''));
+        if (!preg_match('/^[\w.-]+\.sql$/', $filename)) {
+            return $this->failure();
+        }
+        $path = realpath($this->dbadmin->database->getExportPath());
+        $f = realpath($path . DIRECTORY_SEPARATOR . $filename);
+        if (!$path || !$f || strpos($f, $path . DIRECTORY_SEPARATOR) !== 0 || !is_file($f)) {
             return $this->failure();
         }
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
         header('Content-Length: ' . filesize($f));
-        header('Content-Disposition: attachment; filename=' . basename($filename));
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Transfer-Encoding: binary');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
         ob_get_level() && @ob_end_flush();
         @readfile($f);
+        @unlink($f);
         die();
     }
 }

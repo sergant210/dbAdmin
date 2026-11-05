@@ -27,6 +27,15 @@ class dbAdminHomeManagerController extends modExtraManagerController
 
     /**
      * {@inheritDoc}
+     * @return bool
+     */
+    public function checkPermissions()
+    {
+        return $this->modx->hasPermission('tables_list');
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function loadCustomCssJs()
     {

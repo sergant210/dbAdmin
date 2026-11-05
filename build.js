@@ -17,8 +17,11 @@ const yearRange = currentYear > startYear ? `${startYear}-${currentYear}` : `${s
 const dateStr = new Date().toISOString()
     .split('T')[0];
 
-const copyrightRegex = new RegExp(`Copyright ${startYear}(-\\d{4})? by`, 'g');
-const copyrightReplace = `Copyright ${yearRange} by`;
+// Update the end year of our own copyright lines and keep their start year.
+// Copyright lines of other authors are not changed.
+const copyrightHolder = 'Thomas Jakobi';
+const copyrightRegex = new RegExp(`Copyright (\\d{4})(?:-\\d{4})? by ${copyrightHolder}`, 'g');
+const copyrightReplace = (match, start) => `Copyright ${parseInt(start) < currentYear ? `${start}-${currentYear}` : start} by ${copyrightHolder}`;
 const apiRegex = new RegExp(`&copy; ${startYear}(-\\d{4})?`, 'g');
 const apiReplace = `&copy; ${yearRange}`;
 const banner = `/*!\n * ${packageJson.fullname} - ${packageJson.description}\n * Version: ${packageJson.version}\n * Build date: ${dateStr}\n */\n`;

@@ -28,7 +28,7 @@ dbAdmin.panel.Home = function (config) {
                         var msg = '<span style="display: inline-block; text-align: center">' +
                             '&copy; 2018-2022 by Sergey Shlokov <a href="https://github.com/sergant210" target="_blank">github.com/sergant210</a><br>' +
                             '<img src="' + dbAdmin.config.assetsUrl + 'img/mgr/treehill-studio.png" srcset="' + dbAdmin.config.assetsUrl + 'img/mgr/treehill-studio@2x.png 2x" alt="Treehill Studio" style="margin-top: 10px"><br>' +
-                            '&copy; 2023-2025 by <a href="https://treehillstudio.com" target="_blank">treehillstudio.com</a></span>';
+                            '&copy; 2023-2026 by <a href="https://treehillstudio.com" target="_blank">treehillstudio.com</a></span>';
                         Ext.Msg.show({
                             title: _('dbadmin') + ' ' + dbAdmin.config.version,
                             msg: msg,
@@ -77,14 +77,14 @@ Ext.reg('dbadmin-panel-hometab', dbAdmin.panel.HomeTab);
 dbAdmin.panel.Overview = function (config) {
     config = config || {};
     this.ident = 'dbadmin-overview-' + Ext.id();
-    this.panelOverviewTabs = [{
+    var tabs = [{
         xtype: 'dbadmin-panel-hometab',
         title: _('dbadmin.tables'),
         description: _('dbadmin.tables_desc'),
         tabtype: 'tables'
-    }, {
+    }, (dbAdmin.config.permissions.sql_query_execute) ? {
         xtype: 'dbadmin-panel-sql'
-    }];
+    } : undefined].filter(x => x !== undefined);
     Ext.applyIf(config, {
         items: [{
             id: 'dbadmin-tabpanel',
@@ -98,6 +98,12 @@ dbAdmin.panel.Overview = function (config) {
                     activeTab: this.items.indexOf(this.getActiveTab())
                 };
             },
+            applyState: function (state) {
+                // Ignore a saved tab, that is removed without the permission
+                if (state && state.activeTab >= 0 && state.activeTab < tabs.length) {
+                    Ext.apply(this, state);
+                }
+            },
             autoScroll: true,
             deferredRender: true,
             forceLayout: false,
@@ -106,7 +112,7 @@ dbAdmin.panel.Overview = function (config) {
                 autoHeight: true,
                 hideMode: 'offsets'
             },
-            items: this.panelOverviewTabs,
+            items: tabs,
             listeners: {
                 tabchange: function (o, t) {
                     if (t.xtype === 'dbadmin-panel-hometab') {

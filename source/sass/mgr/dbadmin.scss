@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "sass:meta";
 
 $treehillstudio-color: #cbd842;
@@ -69,13 +68,97 @@ $disabled: #555555;
   }
 }
 
+.modx-grid-small {
+  .x-grid3-cell-inner {
+    padding: 8px 5px 8px 5px;
+  }
+
+  .x-grid3-hd-inner {
+    padding: 8px 18px 8px 5px;
+  }
+
+  .x-grid3-td-checker {
+    padding: 6px 0 0;
+
+    &.x-grid3-hd {
+      padding-top: 0;
+    }
+  }
+
+  .x-panel-tbar {
+    .x-toolbar {
+      padding-top: 2px;
+
+      &.x-small-editor {
+        .x-form-text {
+          padding: 3px 8px 2px 8px;
+          margin-top: 0;
+        }
+      }
+
+      .x-btn {
+        padding: 4px 10px 4px 10px;
+      }
+    }
+  }
+
+  .x-panel-bbar {
+    .x-toolbar {
+      .x-btn {
+        padding: 2px 2px;
+      }
+
+      .x-form-text {
+        padding: 2px 3px;
+      }
+    }
+  }
+
+  .x-tbar-loading {
+    &:before {
+      line-height: 16px;
+    }
+  }
+
+  .x-tbar-page {
+    &-last, &-next, &-prev, &-first {
+      &:before {
+        line-height: 16px;
+      }
+    }
+  }
+
+  .x-btn-icon {
+    &.arrow_up, &.arrow_down, &.refresh {
+      button {
+        &:before {
+          line-height: 16px;
+        }
+      }
+    }
+  }
+
+  .x-small-editor {
+    .x-form-text, .x-form-field-wrap {
+      margin-top: 2px;
+    }
+  }
+}
+
 #dbadmin-grid-table-data {
   .x-panel-body {
     overflow: visible !important;
     .x-grid3 {
       overflow: visible !important;
-      .x-grid3-viewport {
-        overflow: visible !important;
+      // Scroll the rows inside the grid, Ext sets overflow visible for grids with autoHeight
+      .x-grid3-scroller {
+        max-height: min(600px, calc(100vh - 300px));
+        overflow: auto !important;
+      }
+      // Ext sets the header width only for grids without autoHeight. Without it, the
+      // header is as wide as the columns and can't follow the horizontal scrolling.
+      .x-grid3-header-inner {
+        width: 100% !important;
       }
     }
   }
@@ -123,10 +206,10 @@ $disabled: #555555;
 
 .treehillstudio_window {
   a {
-    color: color.adjust($treehillstudio-color, $lightness: -10%);
+    color: #b2bf28; // color.adjust($treehillstudio-color, $lightness: -10%)
     text-decoration: none;
     &:hover {
-      color: color.adjust($treehillstudio-color, $lightness: -25%);
+      color: #77801a; // color.adjust($treehillstudio-color, $lightness: -25%)
     }
   }
 }
@@ -150,7 +233,7 @@ $disabled: #555555;
   z-index: 15;
   &:before,
   &:after {
-    border: 5px solid color.adjust($red, $lightness: -15%);
+    border: 5px solid #720000; // color.adjust($red, $lightness: -15%)
     content: '';
     display: block;
     position: absolute;

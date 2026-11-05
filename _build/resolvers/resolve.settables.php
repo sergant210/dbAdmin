@@ -17,41 +17,16 @@ if (!function_exists('setTables')) {
     function setTables($modx, $dbadmin)
     {
         /** @var dbAdminTable[] $tables */
-        $tables = $modx->getIterator('dbAdminTable', ['class:=' => '']);
+        $tables = $modx->getIterator('dbAdminTable', [
+            'class:=' => '',
+            'OR:class:IS' => null
+        ]);
         foreach ($tables as $table) {
-            $name = str_replace($modx->config['table_prefix'], '', $table->get('name'));
-            $namespaces = $modx->getIterator('modNamespace');
-            foreach ($namespaces as $namespace) {
-                $package = ($namespace->get('name') != 'core') ? $namespace->get('name') : 'modx';
-                if ($package != '' && $table->get('class') == '') {
-                    try {
-                        $class = $dbadmin->database->getPackageClass($package, $name);
-                        if ($class) {
-                            $table->set('package', $package);
-                            $table->set('class', $class);
-                            $table->save();
-                            $modx->log(xPDO::LOG_LEVEL_INFO, 'Set class to \'' . $class . '\' for table \'' . $name . '\'');
-                            break;
-                        }
-
-                    } catch (Exception $e) {
-                    }
-                }
-            }
-            if (!$class) {
-                foreach (['modx', 'modx.sources', 'modx.registry.db', 'modx.transport'] as $package) {
-                    try {
-                        $class = $dbadmin->database->getPackageClass($package, $name);
-                        if ($class) {
-                            $table->set('package', $package);
-                            $table->set('class', $class);
-                            $table->save();
-                            $modx->log(xPDO::LOG_LEVEL_INFO, 'Set class to \'' . $class . '\' for table \'' . $name . '\'');
-                            break;
-                        }
-                    } catch (Exception $e) {
-                    }
-                }
+            // Only a class, that can be loaded and belongs to the table, is set
+            list($class) = $dbadmin->database->setTableClass($table);
+            if ($class) {
+                $table->save();
+                $modx->log(xPDO::LOG_LEVEL_INFO, 'Set class to \'' . $class . '\' for table \'' . $table->get('name') . '\'');
             }
         }
     }

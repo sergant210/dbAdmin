@@ -15,6 +15,9 @@ class dbAdminTableFieldsGetProcessor extends Processor
 {
     public $permission = 'table_view';
 
+    /** @var bool If the class of the table could be loaded and belongs to the table */
+    protected $classLoaded = false;
+
     /**
      * @return mixed
      */
@@ -22,11 +25,12 @@ class dbAdminTableFieldsGetProcessor extends Processor
     {
         $table = $this->getProperty('table', '');
         $forSelect = $this->getProperty('forselect', false);
-        if (empty($table)) {
+        $classLoaded = false;
+        if (!$this->dbadmin->database->tableExists($table)) {
             return $this->failure($this->modx->lexicon('dbadmin.table_err_nf'));
         }
-        $table = $this->modx->escape($table);
-        $sql = 'SHOW COLUMNS FROM ' . $table;
+        $sql = 'SHOW COLUMNS FROM ' . $this->dbadmin->database->quoteIdentifier($table);
+        $data = [];
         try {
             if ($stmt = $this->modx->prepare($sql)) {
                 $stmt->execute();
@@ -39,15 +43,25 @@ class dbAdminTableFieldsGetProcessor extends Processor
         if ($forSelect) {
             $fields = [];
             foreach ($data as $field) {
-                $fields[] = $this->modx->escape($field['Field']);
+                $fields[] = $this->dbadmin->database->quoteIdentifier($field['Field']);
             }
             $fields = implode(',', $fields);
         } else {
+            // The primary key of the table and of the class, the record is saved with the class
+            $classKey = trim((string)$this->getProperty('class', ''));
+            $package = strtolower(trim((string)$this->getProperty('package', '')));
+            $classPrimaryKeys = [];
+            // The records can only be edited with a class, that belongs to the table
+            $classLoaded = $this->dbadmin->database->loadTableClass($classKey, $package, (string)$table);
+            if ($classLoaded) {
+                $classPrimaryKeys = (array)$this->modx->getPK($classKey);
+            }
             $fields = [];
             foreach ($data as $field) {
                 $fields[] = [
                     'name' => $field['Field'],
-                    'type' => $this->getFieldType($field['Type'])
+                    'type' => $this->getFieldType($field['Type']),
+                    'primary' => ($field['Key'] === 'PRI' || in_array($field['Field'], $classPrimaryKeys, true))
                 ];
             }
             $fields[] = [
@@ -55,6 +69,7 @@ class dbAdminTableFieldsGetProcessor extends Processor
                 'type' => 'actions'
             ];
         }
+        $this->classLoaded = $classLoaded;
         return $this->success('', $fields);
 
     }
@@ -86,7 +101,8 @@ class dbAdminTableFieldsGetProcessor extends Processor
         $output = [
             'success' => true,
             'message' => $msg,
-            'fields' => $fields
+            'fields' => $fields,
+            'classLoaded' => $this->classLoaded
         ];
         return $this->modx->toJSON($output);
     }

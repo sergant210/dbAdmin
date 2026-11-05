@@ -3,6 +3,26 @@ dbAdmin.utils.renderBoolean = function (value) {
         ? String.format('<span class="green">{0}</span>', _('yes'))
         : String.format('<span class="red">{0}</span>', _('no'));
 };
+dbAdmin.utils.renderValue = function (value) {
+    if (value === null || value === undefined) {
+        return '<em style="color: #999">NULL</em>';
+    }
+    return Ext.util.Format.htmlEncode(String(value));
+};
+dbAdmin.utils.renderText = function (value) {
+    return (value === null || value === undefined) ? '' : Ext.util.Format.htmlEncode(String(value));
+};
+dbAdmin.utils.getFieldNames = function (fields) {
+    var names = [];
+    for (var i = 0; i < fields.length; i++) {
+        names.push(fields[i]['name']);
+    }
+    return names;
+};
+// The permissions only hide the actions, the processors check them again
+dbAdmin.utils.hasPermission = function (permission) {
+    return !!(dbAdmin.config.permissions && dbAdmin.config.permissions[permission]);
+};
 dbAdmin.utils.getMenu = function (actions, grid, selected) {
     var menu = [];
     var cls, icon, title, action = '';
@@ -16,19 +36,21 @@ dbAdmin.utils.getMenu = function (actions, grid, selected) {
                 menu.push('-');
             }
             continue;
-        } else if (menu.length > 0 && /^remove/i.test(a['action'])) {
-            menu.push('-');
         }
+        title = a['title'] ? a['title'] : '';
         if (selected.length > 1) {
             if (!a['multiple']) {
                 continue;
             } else if (typeof (a['multiple']) == 'string') {
-                a['title'] = a['multiple'];
+                // Don't change the action of the row, its button title would be changed too
+                title = a['multiple'];
             }
+        }
+        if (menu.length > 0 && /^remove/i.test(a['action'])) {
+            menu.push('-');
         }
         cls = a['cls'] ? a['cls'] : '';
         icon = a['icon'] ? a['icon'] : '';
-        title = a['title'] ? a['title'] : a['title'];
         action = a['action'] ? grid[a['action']] : '';
         menu.push({
             handler: action,

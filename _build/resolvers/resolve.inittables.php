@@ -29,7 +29,7 @@ if ($object->xpdo) {
             ]);
             // Fill dbAdminTable
             if (!$modx->getCount('dbAdminTable')) {
-                $tables = array_merge($dbadmin->database->getDbTables(), $dbadmin->database->getSystemTables());
+                $tables = $dbadmin->database->getDbTables();
                 foreach ($tables as $name => $info) {
                     /** @var dbAdminTable $obj */
                     $obj = $modx->newObject('dbAdminTable');

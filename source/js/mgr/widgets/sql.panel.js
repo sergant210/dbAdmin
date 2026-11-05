@@ -61,15 +61,9 @@ dbAdmin.panel.Sql = function (config) {
                                     success: {
                                         fn: function (r) {
                                             panel.el.unmask();
-                                            var val = outputType === 'var_export' ? '<?php\n//' : '';
-                                            if (r.select) {
-                                                if (r.number === 0) {
-                                                    val += _('dbadmin.rows_number') + '0';
-                                                } else {
-                                                    val += _('dbadmin.rows_number') + r.number + '\n\n' + r.data;
-                                                }
-                                            } else {
-                                                val = _('dbadmin.sql_executed_success');
+                                            var val = r.message;
+                                            if (r.select && r.number > 0) {
+                                                val = (outputType === 'var_export' ? '<?php\n// ' + val : val) + '\n\n' + r.data;
                                             }
                                             Ext.getCmp('dbadmin-sql-query-result').setValue(val);
                                         }
@@ -77,7 +71,11 @@ dbAdmin.panel.Sql = function (config) {
                                     failure: {
                                         fn: function (r) {
                                             panel.el.unmask();
+                                            // The error is shown in the result field, suppress the
+                                            // following error message box only once
+                                            var showError = MODx.form.Handler.showError;
                                             MODx.form.Handler.showError = function () {
+                                                MODx.form.Handler.showError = showError;
                                                 return false;
                                             };
                                             Ext.getCmp('dbadmin-sql-query-result').setValue(r.message);

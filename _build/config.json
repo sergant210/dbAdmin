@@ -3,14 +3,15 @@
   "lowCaseName": "dbadmin",
   "description": "Database Tables Administration for MODX",
   "author": "Sergei Shlokov, Thomas Jakobi",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "package": {
     "menus": [
       {
         "text": "dbadmin.menu",
         "description": "dbadmin.menu_desc",
         "action": "home",
-        "parent": "components"
+        "parent": "components",
+        "permissions": "tables_list"
       }
     ],
     "systemSettings": [
@@ -42,15 +43,15 @@
     "license": "docs/license.md",
     "changelog": "docs/changelog.md",
     "options": {
-      "empty_folders": {
-        "{package_path}assets/components/dbadmin/export": "*"
-      }
+      "composer": true
     },
     "setupOptions": {
       "source": "setup.options.php"
     },
     "resolver": {
       "after": [
+        "resolve.composer.php",
+        "resolve.cleanup.php",
         "resolve.synctables.php",
         "resolve.inittables.php",
         "resolve.settables.php",

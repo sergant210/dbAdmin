@@ -2,7 +2,7 @@
 /**
  * dbAdmin
  *
- * Copyright 2018-2023 by Thomas Jakobi <office@treehillstudio.com>
+ * Copyright 2018-2026 by Thomas Jakobi <office@treehillstudio.com>
  *
  * @package dbadmin
  * @subpackage classfile
@@ -41,7 +41,7 @@ class dbAdmin
      * The version
      * @var string $version
      */
-    public $version = '1.4.1';
+    public $version = '1.5.0';
 
     /**
      * The class options
@@ -102,7 +102,8 @@ class dbAdmin
         // Add default options
         $this->options = array_merge($this->options, [
             'debug' => $this->getBooleanOption('debug', [], false),
-            'modxversion' => $modxversion['version']
+            'modxversion' => $modxversion['version'],
+            'permissions' => $this->getPermissions(),
         ]);
 
         $this->database = new Database($this->modx, $this);
@@ -161,5 +162,29 @@ class dbAdmin
         ];
 
         return $response;
+    }
+
+    /**
+     * Get the dbAdmin permissions of the current user. They only hide the
+     * actions in the manager, the processors check them again.
+     * @return array
+     */
+    public function getPermissions(): array
+    {
+        $access = [];
+        $perms = [
+            'sql_query_execute',
+            'table_export',
+            'table_remove',
+            'table_save',
+            'table_truncate',
+            'table_view',
+        ];
+        // The service is created in the setup too, where no context is initialized
+        $hasContext = is_object($this->modx->context);
+        foreach ($perms as $p) {
+            $access[$p] = $hasContext && $this->modx->hasPermission($p);
+        }
+        return $access;
     }
 }

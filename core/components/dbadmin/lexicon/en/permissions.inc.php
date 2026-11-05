@@ -6,6 +6,7 @@
  * @subpackage lexicon
  */
 $_lang['dbadmin.permission.sql_query_execute_desc'] = 'Permission to execute SQL queries.';
+$_lang['dbadmin.permission.table_core_edit_desc'] = 'Permission to edit, truncate, rename and delete the MODX core tables.';
 $_lang['dbadmin.permission.table_export_desc'] = 'Permission to export a table.';
 $_lang['dbadmin.permission.table_remove_desc'] = 'Permission to delete a table (drop table).';
 $_lang['dbadmin.permission.table_save_desc'] = 'Permission to save the table data.';

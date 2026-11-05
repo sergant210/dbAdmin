@@ -6,6 +6,7 @@
  * @subpackage lexicon
  */
 $_lang['dbadmin.permission.sql_query_execute_desc'] = 'Разрешение на выполнение SQL-запросов.';
+$_lang['dbadmin.permission.table_core_edit_desc'] = 'Разрешение на редактирование, очистку, переименование и удаление таблиц ядра MODX.';
 $_lang['dbadmin.permission.table_export_desc'] = 'Разрешение на экспорт таблицы.';
 $_lang['dbadmin.permission.table_remove_desc'] = 'Разрешение на удаление таблицы (drop table).';
 $_lang['dbadmin.permission.table_save_desc'] = 'Разрешение на сохранение данных таблицы.';

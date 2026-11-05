@@ -4,7 +4,7 @@
   "description": "Database Tables Administration for MODX",
   "author": "Sergei Shlokov <sergant210@bk.ru>, Thomas Jakobi <office@treehillstudio.com>",
   "private": true,
-  "version": "1.4.1",
+  "version": "1.5.0",
   "phpversion": "7.4",
   "modxversion": "2.8",
   "startYear": "2023",
